@@ -15,37 +15,25 @@ output:
 ```{r child = "setup.Rmd"}
 ```
 
-# Start with Story
-
-# Why Use RMarkdown?
-
-You can combine code and writing in one document (i.e no copying into Excel to make figures). 
-
---
-
-You write it in a simple way (using Markdown syntax) so that you can compile it into multiple formats
-
---
-
-You then run your analyses and get a report spit out in Word, PDF, or HTML format (and many others as well). 
-
---
-
-Added bonus: no potential for copy and paste errors!
-
-
----
-
 
 # RMarkdown Document Overview
 
+--
+
 Every RMarkdown document has the following:
+
+--
 
 1. **YAML** (one per document)
 
+--
+
 2. **Markdown text** (repeated as many times as necessary)
 
+--
+
 3. **Code chunks** (repeated as many times as necessary)
+
 
 
 ---
@@ -54,15 +42,33 @@ Every RMarkdown document has the following:
 
 ![](images/rmarkdown-overview.png)
 
+
+---
+class:inverse
+
+## Your Turn
+
+Take a look at [this RMarkdown document](https://github.com/dgrtwo/data-screencasts/blob/master/college-majors.Rmd). It is a report produced by David Robinson as part of his series of screencasts analyzing data as part of the [Tidy Tuesday project](https://github.com/rfordatascience/tidytuesday). You can find the associated screencast for this report [here](https://www.youtube.com/watch?v=nx5yhXAQLxw).
+
+In looking through the code, make sure that you can identify the YAML, Markdown text, and code chunks. 
+
+
+
 ---
 
-## YAML
+# YAML
+
+![](images/yaml.png)
+
+---
+
+# YAML
 
 Stands for "YAML Ain't Markup Language" (don't worry about it).
 
 --
 
-Often referred to as "R Markdown front matter."
+Often referred to as "RMarkdown front matter."
 
 --
 
@@ -80,7 +86,50 @@ output: html_document
 
 ---
 
-## Markdown Text
+class: inverse
+
+## Your Turn
+
+1. Create a new project. Don’t worry too much about what’s it called, etc because we’ll only use this for a bit to demonstrate how RMarkdown works.
+
+1. Create a new RMarkdown document with the title “My Boring Report.” Have the output format be HTML.
+
+1. Go into the YAML and change the title to “My Super Fancy Report.”
+
+1. Remove the line with the date from the YAML.
+
+1. Save your RMarkdown file as report.Rmd.
+
+---
+
+
+# Text
+
+
+
+![](images/text.png)
+
+---
+
+##Text
+
+.pull-left[
+With Markdown text, you write everything as pure text (no clicking a B button to make things bold). 
+]
+
+.pull-right[
+![](images/word-formatting.png)
+]
+
+---
+
+
+class: middle
+
+![](images/markdown-text-to-output.png)
+---
+
+## Text
 
 
 .pull-left[
@@ -91,37 +140,51 @@ Text with **some words in bold**
 and *some words in italics*
 
 
-
-# Header
-
-## Subheader
-
-### Third-Level Subheader
-
-
-
-- Bulleted list
-    - Sublist
-
-
-1. Numbered
-2. List
 ```
+
 ]
+
+--
 
 .pull-right[
 **Output**
 
 Text with **some words in bold** and *some words in italics*
 
-### Header
-#### Subheader
+]
 
-- Bulleted list
-    - Sublist
 
-1. Numbered
-2. List
+---
+
+## Headers
+
+
+.pull-left[
+**Markdown**
+
+```
+
+
+# First-Level Header
+
+## Second-Level Header
+
+### Third-Level Subheader
+
+
+```
+]
+
+--
+
+.pull-right[
+**Output**
+
+# First-Level Header
+
+## Second-Level Header
+
+### Third-Level Subheader
 
 ]
 
@@ -130,19 +193,89 @@ Text with **some words in bold** and *some words in italics*
 ---
 
 
+## Lists
+
+
+.pull-left[
+**Markdown**
+
+```
+
+- Bulleted list item #1
+- Bulleted list item #2
+
+
+1. Numbered list item #1
+1. Numbered list item #2
+```
+]
+
+--
+
+.pull-right[
+**Output**
+
+
+- Bulleted list item #1
+- Bulleted list item #2
+
+
+1. Numbered list item #1
+1. Numbered list item #2
+
+]
+
+
+
+---
+
+class: inverse
+
+## Your Turn
+
+1. Working in your report.Rmd file, above the RMarkdown second-level header, add the following first-level header: "Introduction"
+
+2. Just below this header, add this text below the introduction header: "This report is the best report ever. Pretty much the **bees' knees**. Can't say that I've *ever* seen a better report."
+
+3. Just below this text, add the following second-level header: "Reasons Why This Report is the Best"
+
+4. Just below this header, add the following list of reasons why the report is the best:
+
+- It's amazing
+- It's quite amazing
+- It's seriously amazing
+
+---
+
+
+
+
+# Code Chunks
+
+
+![](images/code-chunk.png)
+
+---
+
 # Code Chunks
 
 RMarkdown can also execute the code and then display the result. They start with three backticks and {r} and end with three backticks. 
 
-*Keyboard shortcut to add a code chunk: command-option-I (Mac).*
+*Keyboard shortcut to add a code chunk: command+option+I (Mac) and control+alt+I (Windows).*
 
+---
+
+# Code Chunks
 
 .pull-left[
 **Code Chunk**
 
 
-![](images/code-chunk.png)
+![](images/reunion-map-code-chunk.png)
 ]
+
+--
+
 .pull-right[
 **Output**
 
@@ -174,36 +307,13 @@ Two most important ones:
 
 `include`: Do you want to include the output (i.e. the graph or table) that the code produces?
 
---
-
-
-There are a lot more options that we won't discuss today: 
-
-- `warning` (show any warnings that R throws)
-- `message` (show any messages that R sends)
-- `fig.width` (default figure width)
-- `fig.height` (default figure height), etc. 
 
 
 ---
 
-
-## An important note
-
-You must do all the work with your data in the same RMarkdown file that you use to create your report. 
-
---
-
-If you have imported data using an R script, it will not work in RMarkdown unless you import that same data **within your RMarkdown file**. 
-
---
-
-Just because it shows in the environment pane, doesn't mean you can use it!
-
-
+# Knit Your File
 
 ---
-
 
 # Output Formats
 

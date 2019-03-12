@@ -46,7 +46,7 @@ a , a > code {
      text-shadow: none;
 }
 
-.inverse {
+.inverse, .inverse a {
   color: #f3f3f3;
 }
 
