@@ -5,8 +5,18 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
+
+# Introduction
+
+This report is the best report ever. Pretty much the **bees' knees**. Can't say that I've *ever* seen a better report.
+
+## Reasons Why This Report is the Best
+
+- It's amazing
+- It's quite amazing
+- It's seriously amazing
 
 ## R Markdown
 
@@ -14,7 +24,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
+```{r cars, include = FALSE}
 summary(cars)
 ```
 
@@ -26,4 +36,14 @@ You can also embed plots, for example:
 plot(pressure)
 ```
 
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r warning = FALSE, message = FALSE}
+library(skimr)
+
+skim(cars)
+```
+
+

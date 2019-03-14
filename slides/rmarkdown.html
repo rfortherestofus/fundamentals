@@ -32,7 +32,7 @@ layout: true
 ---
 
 
-# RMarkdown Document Overview
+# RMarkdown Overview
 
 --
 
@@ -44,7 +44,7 @@ Every RMarkdown document has the following:
 
 --
 
-2. **Markdown text** (repeated as many times as necessary)
+2. **Text** (repeated as many times as necessary)
 
 --
 
@@ -54,7 +54,7 @@ Every RMarkdown document has the following:
 
 ---
 
-## RMarkdown Document Overview
+## RMarkdown Overview
 
 ![](images/rmarkdown-overview.png)
 
@@ -64,9 +64,16 @@ class:inverse
 
 ## Your Turn
 
-Take a look at [this RMarkdown document](https://github.com/dgrtwo/data-screencasts/blob/master/college-majors.Rmd). It is a report produced by David Robinson as part of his series of screencasts analyzing data as part of the [Tidy Tuesday project](https://github.com/rfordatascience/tidytuesday). You can find the associated screencast for this report [here](https://www.youtube.com/watch?v=nx5yhXAQLxw).
+1. Create a new project. Don’t worry too much about what’s it called, etc because we’ll only use this for a bit to demonstrate how RMarkdown works.
 
-In looking through the code, make sure that you can identify the YAML, Markdown text, and code chunks. 
+1. Create a new RMarkdown file, setting the default output format as Word.
+
+1. Save your RMarkdown file as report.Rmd.
+
+1. Look through this RMarkdown file and make sure that you can identify the YAML, text sections, and code chunks.
+
+1. Click the Knit button and open the file that gets produced (report.docx).
+
 
 
 
@@ -107,15 +114,15 @@ class: inverse
 
 ## Your Turn
 
-1. Create a new project. Don’t worry too much about what’s it called, etc because we’ll only use this for a bit to demonstrate how RMarkdown works.
-
-1. Create a new RMarkdown document with the title “My Boring Report.” Have the output format be HTML.
-
 1. Go into the YAML and change the title to “My Super Fancy Report.”
 
 1. Remove the line with the date from the YAML.
 
-1. Save your RMarkdown file as report.Rmd.
+1. Change the output format to HTML by changing `output: word_document` to `output: html_document`.
+
+1. Knit again and open report.html to make sure your changes show up.
+
+
 
 ---
 
@@ -144,6 +151,7 @@ With Markdown text, you write everything as pure text (no clicking a B button to
 class: middle
 
 ![](images/markdown-text-to-output.png)
+
 ---
 
 ## Text
@@ -252,15 +260,17 @@ class: inverse
 
 1. Working in your report.Rmd file, above the RMarkdown second-level header, add the following first-level header: "Introduction"
 
-2. Just below this header, add this text below the introduction header: "This report is the best report ever. Pretty much the **bees' knees**. Can't say that I've *ever* seen a better report."
+1. Add this text (note the bold and italics) below the introduction header: "This report is the best report ever. Pretty much the **bees' knees**. Can't say that I've *ever* seen a better report."
 
-3. Just below this text, add the following second-level header: "Reasons Why This Report is the Best"
+1. Add the following second-level header: "Reasons Why This Report is the Best"
 
-4. Just below this header, add the following list of reasons why the report is the best:
+1. Add the following list of reasons why the report is the best:
 
-- It's amazing
-- It's quite amazing
-- It's seriously amazing
+    - It's amazing
+    - It's quite amazing
+    - It's seriously amazing
+
+1. Knit again and reopen the report.html file to make sure your changes show up. 
 
 ---
 
@@ -274,15 +284,19 @@ class: inverse
 
 ---
 
-# Code Chunks
+## Code Chunks
 
-RMarkdown can also execute the code and then display the result. They start with three backticks and {r} and end with three backticks. 
+They start with three backticks and {r} and end with three backticks. 
 
-*Keyboard shortcut to add a code chunk: command+option+I (Mac) and control+alt+I (Windows).*
+.dk-smaller[
+![](images/reunion-map-code-chunk.png)
+]
+
+
 
 ---
 
-# Code Chunks
+## Code Chunks
 
 .pull-left[
 **Code Chunk**
@@ -303,85 +317,124 @@ RMarkdown can also execute the code and then display the result. They start with
 
 ---
 
+## Insert a Code Chunk: Button
+
+![](images/insert-code-chunk-animated.gif)
+
+---
+
+## Insert a Code Chunk: Keyboard Shortcut
+
+
+.pull-left[
+![](images/apple-logo.png)
+
+**Mac**
+
+*command+option+I*
+]
+
+.pull-right[
+![](images/windows-logo.png)
+
+**Windows**
+
+*control+alt+I*
+]
+
+---
+
+## Code Chunk Names
+
+You can (but don't have to) give code chunks names. 
+
+--
+
+.pull-left[
+![](images/code-chunk-names.png)
+]
+
+--
+
+.pull-right[
+![](images/code-chunk-no-name.png)
+]
+
+
+---
+
+## Chunk Options: `echo`
+
+--
+
+Do you want to show (i.e. **echo**) the R code in the knitted report?
+
+![](images/code-chunk-echo.png)
+
+
+
+---
+
+## Chunk Options: `include`
+
+
+Do you want to **include the output** (i.e. the graph or table) that the code produces?
+
+![](images/code-chunk-include.png)
+
+
+---
+
+## More Chunk Options
+
+**Other options** that we won't discuss in this course: 
+
+- **`warning`** (show any warnings that R throws)
+- **`message`** (show any messages that R sends)
+- **`fig.width`** (default figure width)
+- **`fig.height`** (default figure height)
+- and many more ...
+
+
+---
+
 
 ## Setup Code Chunk
 
+--
+
 A special code chunk with the text `setup` right after the `r`. 
 
-It sets defaults for the entire document. You can change this for each code chunk.
-
-![](images/setup-chunk.png)
-
----
-
-## Chunk Options
-
-Two most important ones:
-
-`echo`: Do you want to show the R code in the final report?
+![](images/setup-code-chunk.png)
 
 --
 
-`include`: Do you want to include the output (i.e. the graph or table) that the code produces?
+All chunk options can be set at the **global level** (in the setup code chunk) or at the **chunk level** (for individual chunks).
 
-
-
----
-
-# Knit Your File
-
----
-
-# Output Formats
-
-Lots of options, with Word, PDF, and HTML the most common. 
 
 --
 
-We recommend you start with HTML because it allows you to do things like have a clickable table of contents, paged results tables, interactive figures, see your code, and more (you can switch to another format at any point). 
-
-
-![](images/arted-snapshot.gif)
-
----
-
-
-## Changing Output Format
-
-You can use the dropdown next to the knit button to change the output format. You can even knit to multiple formats at the same time!
-
-![](images/render-to-word.gif)
+Options at the individual chunk level **override** global chunk options.
 
 
 
 ---
 
-# Render Your File
+class: inverse
 
+## Your Turn
 
-![](images/knit.gif)
+1. Change the default chunk options in the setup code chunk so that `echo = FALSE`. Knit your report and notice what is different. 
+
+1. Change the chunk options in the cars code chunk so that `include = FALSE`. Knit your report and notice what is different. 
+
+1. Add a new code chunk (don't worry about naming it). In it, load the package `skimr` (hint: use the `library` function). Then, use the `skim` function that you learned about in the Getting Started course to skim the `cars` data frame. Knit your report to see the output. 
 
 ---
 
+class: inverse, middle, center
 
-class:inverse
-
-## Your Task
-
-1. Create a new RMarkdown file.
-
-2. Knit your file and open it.
-
-3. Add a new header somewhere in the file that says: "*Hipster Ipsum*"
-
-4. Add the following text somewhere in the file: "*Lorem ipsum dolor amet occupy 90's kinfolk man*"
-
-5. Change the default in the setup chunk so that code does not show in the knitted report.
-
-6. Change the output format so that your file knits to Word in addition to HTML.
-
-7. Use the knit button to render your RMarkdown file again, making sure you get both HTML and Word files. 
-8. Compare the knitted HTML file you have now to the version you got in step 2.
+# What Else Can You Do with RMarkdown?
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
