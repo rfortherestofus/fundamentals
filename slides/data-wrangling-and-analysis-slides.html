@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fundamentals of Data Wrangling and Analysis in R</title>
+    <meta charset="utf-8">
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Fundamentals of Data Wrangling and Analysis in R
+
+---
+
+
+
+
+
+
+
+
+
+
+
+# Intro Data Set
+
+- NHANES
+- Random Tip: `clean_names` function
+
+---
+
+# Update Packages
+
+---
+
+# The tidyverse
+
+There are many ways to write R code. We're using the `tidyverse` syntax, as opposed to base R. 
+--
+
+.pull-left[
+
+**Base R Syntax**
+
+
+```r
+table(nhanes$education,
+      nhanes$phys_active)
+```
+
+- Starts with function, data frame in parentheses
+- Uses dollar sign notation (data frame$variable)
+- Requires repeating of data frame each time you call it
+]
+
+--
+
+.pull-right[
+**Tidyverse Syntax**
+
+
+
+
+```r
+nhanes %&gt;% 
+  tabyl(education, phys_active)
+```
+
+- "data frame first, data frame once" - [Alison Hill](https://ohsu-conj620.netlify.com/slides/cm012.html#20)
+- Uses the pipe (%&gt;%) to chain together a series of functions
+]
+
+
+
+---
+
+class: center, middle
+
+## The Pipe
+
+![](images/pipe.png)
+
+---
+
+### The Pipe
+
+Using the pipe, we can start with a data frame and then conduct a series of functions all at once. Read each pipe as "then."
+
+
+```r
+nhanes %&gt;% 
+  filter(survey_yr == "2009_10") %&gt;% 
+  group_by(education) %&gt;% 
+  summarize(mean_bmi = mean(bmi, na.rm = TRUE))
+```
+
+*Keyboard shortcut to add a pipe: command-shift-M (Mac) or control-shift-M (Windows).*
+
+---
+
+### The Pipe
+
+Using the pipe doesn't change anything about our data frame, it just displays the results. To change our data frame, we use the assignment operator (`&lt;-`). 
+
+
+```r
+bmi_2009_2010 &lt;- nhanes %&gt;% 
+  filter(survey_yr == "2009_10") %&gt;% 
+  group_by(education) %&gt;% 
+  summarize(mean_bmi = mean(bmi, na.rm = TRUE))
+```
+
+
+
+---
+
+# Data Wrangling and Analysis Verbs
+
+![](images/dplyr-verbs.png)
+
+---
+
+## `select`
+
+Choose variables from the larger data frame
+
+![](images/select.png)
+
+---
+
+### `select`
+
+
+```r
+nhanes %&gt;%
+  select(age)
+```
+
+```
+## # A tibble: 10,000 x 1
+##      age
+##    &lt;dbl&gt;
+##  1    34
+##  2    34
+##  3    34
+##  4     4
+##  5    49
+##  6     9
+##  7     8
+##  8    45
+##  9    45
+## 10    45
+## # … with 9,990 more rows
+```
+
+
+---
+
+### Other ways we can `select` variables
+
+Select multiple variables by listing them:
+
+
+```r
+nhanes %&gt;%
+  select(height, weight)
+```
+
+```
+## # A tibble: 10,000 x 2
+##    height weight
+##     &lt;dbl&gt;  &lt;dbl&gt;
+##  1   165.   87.4
+##  2   165.   87.4
+##  3   165.   87.4
+##  4   105.   17  
+##  5   168.   86.7
+##  6   133.   29.8
+##  7   131.   35.2
+##  8   167.   75.7
+##  9   167.   75.7
+## 10   167.   75.7
+## # … with 9,990 more rows
+```
+
+---
+
+### Other ways we can `select` variables
+
+You can use `one_of()` to do the same thing:
+
+
+```r
+nhanes %&gt;%
+  select(one_of(c("height", "weight")))
+```
+
+```
+## # A tibble: 10,000 x 2
+##    height weight
+##     &lt;dbl&gt;  &lt;dbl&gt;
+##  1   165.   87.4
+##  2   165.   87.4
+##  3   165.   87.4
+##  4   105.   17  
+##  5   168.   86.7
+##  6   133.   29.8
+##  7   131.   35.2
+##  8   167.   75.7
+##  9   167.   75.7
+## 10   167.   75.7
+## # … with 9,990 more rows
+```
+
+---
+
+### Other ways we can `select` variables
+
+`contain()` selects variable with certain text in the variable name:
+
+
+
+```r
+nhanes %&gt;%
+  select(contains("age"))
+```
+
+```
+## # A tibble: 10,000 x 2
+##      age age_decade
+##    &lt;dbl&gt; &lt;chr&gt;     
+##  1    34 30-39     
+##  2    34 30-39     
+##  3    34 30-39     
+##  4     4 0-9       
+##  5    49 40-49     
+##  6     9 0-9       
+##  7     8 0-9       
+##  8    45 40-49     
+##  9    45 40-49     
+## 10    45 40-49     
+## # … with 9,990 more rows
+```
+
+---
+
+### Other ways we can `select` variables
+
+You can select a range of columns using the var1:var2 pattern
+
+
+
+```r
+nhanes %&gt;%
+  select(weight:bmi)
+```
+
+```
+## # A tibble: 10,000 x 3
+##    weight height   bmi
+##     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1   87.4   165.  32.2
+##  2   87.4   165.  32.2
+##  3   87.4   165.  32.2
+##  4   17     105.  15.3
+##  5   86.7   168.  30.6
+##  6   29.8   133.  16.8
+##  7   35.2   131.  20.6
+##  8   75.7   167.  27.2
+##  9   75.7   167.  27.2
+## 10   75.7   167.  27.2
+## # … with 9,990 more rows
+```
+
+---
+
+### Other ways we can `select` variables
+
+Drop variables using the -var format:
+
+
+
+```r
+nhanes %&gt;%
+  select(-id)
+```
+
+```
+## # A tibble: 10,000 x 21
+##    survey_yr gender   age age_decade race1 education marital_status
+##    &lt;chr&gt;     &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;         
+##  1 2009_10   male      34 30-39      White High Sch… Married       
+##  2 2009_10   male      34 30-39      White High Sch… Married       
+##  3 2009_10   male      34 30-39      White High Sch… Married       
+##  4 2009_10   male       4 0-9        Other &lt;NA&gt;      &lt;NA&gt;          
+##  5 2009_10   female    49 40-49      White Some Col… LivePartner   
+##  6 2009_10   male       9 0-9        White &lt;NA&gt;      &lt;NA&gt;          
+##  7 2009_10   male       8 0-9        White &lt;NA&gt;      &lt;NA&gt;          
+##  8 2009_10   female    45 40-49      White College … Married       
+##  9 2009_10   female    45 40-49      White College … Married       
+## 10 2009_10   female    45 40-49      White College … Married       
+## # … with 9,990 more rows, and 14 more variables: hh_income &lt;chr&gt;,
+## #   home_own &lt;chr&gt;, work &lt;chr&gt;, weight &lt;dbl&gt;, height &lt;dbl&gt;, bmi &lt;dbl&gt;,
+## #   health_gen &lt;chr&gt;, days_phys_hlth_bad &lt;dbl&gt;, days_ment_hlth_bad &lt;dbl&gt;,
+## #   sleep_hrs_night &lt;dbl&gt;, phys_active &lt;chr&gt;, phys_active_days &lt;dbl&gt;,
+## #   tv_hrs_day &lt;lgl&gt;, smoke_now &lt;chr&gt;
+```
+
+---
+
+### Other ways we can `select` variables
+
+Drop a set of variables using the -(var1:var2) format:
+
+
+
+```r
+nhanes %&gt;%
+  select(-(id:education))
+```
+
+```
+## # A tibble: 10,000 x 15
+##    marital_status hh_income home_own work  weight height   bmi health_gen
+##    &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     
+##  1 Married        25000-34… Own      NotW…   87.4   165.  32.2 Good      
+##  2 Married        25000-34… Own      NotW…   87.4   165.  32.2 Good      
+##  3 Married        25000-34… Own      NotW…   87.4   165.  32.2 Good      
+##  4 &lt;NA&gt;           20000-24… Own      &lt;NA&gt;    17     105.  15.3 &lt;NA&gt;      
+##  5 LivePartner    35000-44… Rent     NotW…   86.7   168.  30.6 Good      
+##  6 &lt;NA&gt;           75000-99… Rent     &lt;NA&gt;    29.8   133.  16.8 &lt;NA&gt;      
+##  7 &lt;NA&gt;           55000-64… Own      &lt;NA&gt;    35.2   131.  20.6 &lt;NA&gt;      
+##  8 Married        75000-99… Own      Work…   75.7   167.  27.2 Vgood     
+##  9 Married        75000-99… Own      Work…   75.7   167.  27.2 Vgood     
+## 10 Married        75000-99… Own      Work…   75.7   167.  27.2 Vgood     
+## # … with 9,990 more rows, and 7 more variables: days_phys_hlth_bad &lt;dbl&gt;,
+## #   days_ment_hlth_bad &lt;dbl&gt;, sleep_hrs_night &lt;dbl&gt;, phys_active &lt;chr&gt;,
+## #   phys_active_days &lt;dbl&gt;, tv_hrs_day &lt;lgl&gt;, smoke_now &lt;chr&gt;
+```
+
+
+
+---
+
+### Other ways we can `select` variables
+
+There are other ways to select variables. See the [`dplyr` website](https://dplyr.tidyverse.org/reference/select.html).
+
+![](images/select-methods.png)
+
+
+
+
+---
+
+
+
+## `mutate`
+
+.pull-left[
+Create new variables or recode existing ones
+]
+
+.pull-right[
+![](images/mutate.png)
+]
+
+You can use `mutate` in three ways.
+
+
+---
+
+### 1. Create a **new variable with a specific value**
+
+
+```r
+nhanes %&gt;%
+  mutate(country = "United States") %&gt;% 
+  select(country)
+```
+
+```
+## # A tibble: 10,000 x 1
+##    country      
+##    &lt;chr&gt;        
+##  1 United States
+##  2 United States
+##  3 United States
+##  4 United States
+##  5 United States
+##  6 United States
+##  7 United States
+##  8 United States
+##  9 United States
+## 10 United States
+## # … with 9,990 more rows
+```
+
+
+---
+
+### 2. Create a **new variable based on other variables**
+
+
+```r
+nhanes %&gt;%
+  mutate(height_inches = height / 2.54) %&gt;% 
+  select(contains("height"))
+```
+
+```
+## # A tibble: 10,000 x 2
+##    height height_inches
+##     &lt;dbl&gt;         &lt;dbl&gt;
+##  1   165.          64.8
+##  2   165.          64.8
+##  3   165.          64.8
+##  4   105.          41.5
+##  5   168.          66.3
+##  6   133.          52.4
+##  7   131.          51.4
+##  8   167.          65.6
+##  9   167.          65.6
+## 10   167.          65.6
+## # … with 9,990 more rows
+```
+
+
+
+
+---
+
+### 3. Change an **existing variable**
+
+
+```r
+nhanes %&gt;%
+  mutate(bmi = round(bmi, digits = 1)) %&gt;% 
+  select(bmi)
+```
+
+```
+## # A tibble: 10,000 x 1
+##      bmi
+##    &lt;dbl&gt;
+##  1  32.2
+##  2  32.2
+##  3  32.2
+##  4  15.3
+##  5  30.6
+##  6  16.8
+##  7  20.6
+##  8  27.2
+##  9  27.2
+## 10  27.2
+## # … with 9,990 more rows
+```
+
+---
+
+## `filter`
+
+.pull-left[
+Choose a subset of cases.
+]
+
+.pull-right[
+![](images/filter.png)
+]
+
+
+---
+
+### Comparisons
+
+
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Operator &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Usage &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;lt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; less than &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x &amp;lt; y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;lt;= &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; less than or equal to &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x &amp;lt;= y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; greater than &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x &amp;gt; y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;gt;= &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; greater than or equal to &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x &amp;gt;= y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; == &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; exactly equal to &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x == y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; != &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; not equal to &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x != y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; %in% &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; group membership &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x %in% y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; is.na &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; is missing &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; is.na(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; !is.na &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; is not missing &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; !is.na(x) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+
+### `filter`
+
+
+```r
+nhanes %&gt;% 
+* filter(gender == "female") %&gt;%
+  select(gender)
+```
+
+--
+
+
+```
+## # A tibble: 5,020 x 1
+##    gender
+##    &lt;chr&gt; 
+##  1 female
+##  2 female
+##  3 female
+##  4 female
+##  5 female
+##  6 female
+##  7 female
+##  8 female
+##  9 female
+## 10 female
+## # … with 5,010 more rows
+```
+
+
+
+---
+
+### `filter`
+
+
+```r
+nhanes %&gt;% 
+* filter(health_gen != "Good") %&gt;%
+  select(health_gen)
+```
+
+--
+
+
+```
+## # A tibble: 4,583 x 1
+##    health_gen
+##    &lt;chr&gt;     
+##  1 Vgood     
+##  2 Vgood     
+##  3 Vgood     
+##  4 Vgood     
+##  5 Vgood     
+##  6 Fair      
+##  7 Fair      
+##  8 Vgood     
+##  9 Fair      
+## 10 Excellent 
+## # … with 4,573 more rows
+```
+
+---
+
+
+### Logical operators
+
+With logical operators, we can create complex filters (e.g. keep only those who say their health is "good", "very good", or "excellent").
+
+
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Operator &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Usage &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;amp; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; and &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x &amp;amp; y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; | &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; or &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x | y &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ! &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; not &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; !x &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+### `filter`
+
+
+```r
+nhanes %&gt;% 
+* filter(health_gen != "Good" | health_gen != "VGood" | health_gen != "Excellent") %&gt;%
+  select(health_gen)
+```
+
+```
+## # A tibble: 7,539 x 1
+##    health_gen
+##    &lt;chr&gt;     
+##  1 Good      
+##  2 Good      
+##  3 Good      
+##  4 Good      
+##  5 Vgood     
+##  6 Vgood     
+##  7 Vgood     
+##  8 Vgood     
+##  9 Vgood     
+## 10 Fair      
+## # … with 7,529 more rows
+```
+
+
+---
+
+### `filter`
+
+
+```r
+nhanes %&gt;% 
+* filter(health_gen %in% c("Good", "VGood", "Excellent")) %&gt;%
+  select(health_gen)
+```
+
+```
+## # A tibble: 3,834 x 1
+##    health_gen
+##    &lt;chr&gt;     
+##  1 Good      
+##  2 Good      
+##  3 Good      
+##  4 Good      
+##  5 Good      
+##  6 Good      
+##  7 Good      
+##  8 Excellent 
+##  9 Good      
+## 10 Good      
+## # … with 3,824 more rows
+```
+
+
+---
+
+### `filter`
+
+You can chain together multiple `filter` functions. Doing it this way, we don't have create complex logic in one line.
+
+
+```r
+nhanes %&gt;% 
+* filter(gender == "male") %&gt;%
+* filter(health_gen %in% c("Good", "VGood", "Excellent")) %&gt;%
+  select(gender, health_gen)
+```
+
+```
+## # A tibble: 1,993 x 2
+##    gender health_gen
+##    &lt;chr&gt;  &lt;chr&gt;     
+##  1 male   Good      
+##  2 male   Good      
+##  3 male   Good      
+##  4 male   Good      
+##  5 male   Good      
+##  6 male   Good      
+##  7 male   Good      
+##  8 male   Excellent 
+##  9 male   Excellent 
+## 10 male   Excellent 
+## # … with 1,983 more rows
+```
+
+
+
+---
+
+### `filter`
+
+Use &lt;, &gt;, &lt;=, and =&gt; for numeric data.
+
+
+```r
+nhanes %&gt;% 
+* filter(age &gt; 50)
+```
+
+```
+## # A tibble: 2,972 x 22
+##       id survey_yr gender   age age_decade race1 education marital_status
+##    &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;         
+##  1 51654 2009_10   male      66 60-69      White Some Col… Married       
+##  2 51656 2009_10   male      58 50-59      White College … Divorced      
+##  3 51657 2009_10   male      54 50-59      White 9 - 11th… Married       
+##  4 51666 2009_10   female    58 50-59      Mexi… High Sch… Married       
+##  5 51678 2009_10   male      60 60-69      White High Sch… Married       
+##  6 51685 2009_10   female    56 50-59      White College … Married       
+##  7 51685 2009_10   female    56 50-59      White College … Married       
+##  8 51691 2009_10   female    57 50-59      White High Sch… Married       
+##  9 51692 2009_10   male      54 50-59      Hisp… College … Divorced      
+## 10 51692 2009_10   male      54 50-59      Hisp… College … Divorced      
+## # … with 2,962 more rows, and 14 more variables: hh_income &lt;chr&gt;,
+## #   home_own &lt;chr&gt;, work &lt;chr&gt;, weight &lt;dbl&gt;, height &lt;dbl&gt;, bmi &lt;dbl&gt;,
+## #   health_gen &lt;chr&gt;, days_phys_hlth_bad &lt;dbl&gt;, days_ment_hlth_bad &lt;dbl&gt;,
+## #   sleep_hrs_night &lt;dbl&gt;, phys_active &lt;chr&gt;, phys_active_days &lt;dbl&gt;,
+## #   tv_hrs_day &lt;lgl&gt;, smoke_now &lt;chr&gt;
+```
+
+---
+
+
+### `filter`
+
+You can drop `NAs` with `!is.na()` 
+
+
+```r
+nhanes %&gt;% 
+  filter(age &gt; 50) %&gt;% 
+* filter(!is.na(marital_status)) %&gt;%
+  select(age, marital_status)
+```
+
+```
+## # A tibble: 2,969 x 2
+##      age marital_status
+##    &lt;dbl&gt; &lt;chr&gt;         
+##  1    66 Married       
+##  2    58 Divorced      
+##  3    54 Married       
+##  4    58 Married       
+##  5    60 Married       
+##  6    56 Married       
+##  7    56 Married       
+##  8    57 Married       
+##  9    54 Divorced      
+## 10    54 Divorced      
+## # … with 2,959 more rows
+```
+
+
+---
+
+
+### `filter`
+
+You can also drop `NAs` with `drop_na()`
+
+
+```r
+nhanes %&gt;% 
+  filter(age &gt; 50) %&gt;% 
+* drop_na(marital_status) %&gt;%
+  select(age, marital_status)
+```
+
+```
+## # A tibble: 2,969 x 2
+##      age marital_status
+##    &lt;dbl&gt; &lt;chr&gt;         
+##  1    66 Married       
+##  2    58 Divorced      
+##  3    54 Married       
+##  4    58 Married       
+##  5    60 Married       
+##  6    56 Married       
+##  7    56 Married       
+##  8    57 Married       
+##  9    54 Divorced      
+## 10    54 Divorced      
+## # … with 2,959 more rows
+```
+
+---
+
+## `summarize`
+
+.pull-left[
+Go from a complete dataset down to a summary.
+]
+
+.pull-right[
+![](images/summarize.png)
+]
+
+---
+
+### `summarize`
+
+
+```r
+nhanes %&gt;% 
+  summarize(mean_active_days = mean(phys_active_days))
+```
+
+```
+## # A tibble: 1 x 1
+##   mean_active_days
+##              &lt;dbl&gt;
+## 1               NA
+```
+
+
+
+---
+
+### `summarize`
+
+
+
+```r
+nhanes %&gt;% 
+  summarize(mean_active_days = mean(phys_active_days,
+*                                   na.rm = TRUE))
+```
+
+```
+## # A tibble: 1 x 1
+##   mean_active_days
+##              &lt;dbl&gt;
+## 1             3.74
+```
+
+---
+
+### `summarize` math functions
+
+
+
+
+&lt;table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Usage &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; number &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; n() &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; sum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sum(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; minimum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; min(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; maximum &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; max(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; mean &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; mean(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; median &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; mean(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; standard deviation &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; sd(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; variance &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; var(x) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; rank &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; rank(x) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+See the [Base R cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/base-r.pdf) for more.
+
+---
+
+### `summarize`
+
+
+You can have multiple arguments in each usage of `summarize`.
+
+
+```r
+nhanes %&gt;% 
+  summarize(mean_active_days = mean(phys_active_days, na.rm = TRUE),
+*           median_active_days = median(phys_active_days, na.rm = TRUE),
+*           number_of_responses = n())
+```
+
+```
+## # A tibble: 1 x 3
+##   mean_active_days median_active_days number_of_responses
+##              &lt;dbl&gt;              &lt;dbl&gt;               &lt;int&gt;
+## 1             3.74                  3               10000
+```
+
+---
+
+
+## `group_by`
+
+.pull-left[
+`summarize` becomes truly powerful when paired with `group_by`
+]
+
+.pull-right[
+![](images/group-by.png)
+]
+
+
+---
+
+### `group_by`
+
+
+```r
+nhanes %&gt;% 
+* group_by(age_decade) %&gt;%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) 
+```
+
+```
+## # A tibble: 9 x 2
+##   age_decade mean_active_days
+##   &lt;chr&gt;                 &lt;dbl&gt;
+## 1 &lt;NA&gt;                   3.94
+## 2 0-9                    3.86
+## 3 10-19                  3.96
+## 4 20-29                  3.47
+## 5 30-39                  3.46
+## 6 40-49                  3.84
+## 7 50-59                  3.79
+## 8 60-69                  3.81
+## 9 70+                    3.94
+```
+
+
+
+
+
+---
+
+### `group_by` example
+
+`group_by` works for multiple groups.
+
+
+```r
+nhanes %&gt;% 
+* group_by(age_decade, gender) %&gt;%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) 
+```
+
+```
+## # A tibble: 18 x 3
+## # Groups:   age_decade [9]
+##    age_decade gender mean_active_days
+##    &lt;chr&gt;      &lt;chr&gt;             &lt;dbl&gt;
+##  1 &lt;NA&gt;       female             4.01
+##  2 &lt;NA&gt;       male               3.86
+##  3 0-9        female             3.73
+##  4 0-9        male               3.97
+##  5 10-19      female             3.89
+##  6 10-19      male               4.02
+##  7 20-29      female             3.58
+##  8 20-29      male               3.37
+##  9 30-39      female             3.60
+## 10 30-39      male               3.32
+## 11 40-49      female             3.88
+## 12 40-49      male               3.80
+## 13 50-59      female             3.97
+## 14 50-59      male               3.62
+## 15 60-69      female             3.92
+## 16 60-69      male               3.68
+## 17 70+        female             4.04
+## 18 70+        male               3.81
+```
+
+
+---
+
+### `count`
+
+If you just want to count the number of things per group, you can use `count`.
+
+
+
+```r
+nhanes %&gt;% 
+  count(age_decade)
+```
+
+```
+## # A tibble: 9 x 2
+##   age_decade     n
+##   &lt;chr&gt;      &lt;int&gt;
+## 1 &lt;NA&gt;         333
+## 2 0-9         1391
+## 3 10-19       1374
+## 4 20-29       1356
+## 5 30-39       1338
+## 6 40-49       1398
+## 7 50-59       1304
+## 8 60-69        919
+## 9 70+          587
+```
+
+
+---
+
+### `count`
+
+You can also count by multiple groups.
+
+
+```r
+nhanes %&gt;% 
+  count(age_decade, gender)
+```
+
+```
+## # A tibble: 18 x 3
+##    age_decade gender     n
+##    &lt;chr&gt;      &lt;chr&gt;  &lt;int&gt;
+##  1 &lt;NA&gt;       female   193
+##  2 &lt;NA&gt;       male     140
+##  3 0-9        female   653
+##  4 0-9        male     738
+##  5 10-19      female   684
+##  6 10-19      male     690
+##  7 20-29      female   681
+##  8 20-29      male     675
+##  9 30-39      female   677
+## 10 30-39      male     661
+## 11 40-49      female   681
+## 12 40-49      male     717
+## 13 50-59      female   623
+## 14 50-59      male     681
+## 15 60-69      female   480
+## 16 60-69      male     439
+## 17 70+        female   348
+## 18 70+        male     239
+```
+
+
+---
+
+
+## `arrange`
+
+.pull-left[
+Reorder rows in a data frame based on the values of one or more variables
+]
+
+.pull-right[
+![](images/arrange.png)
+]
+
+---
+
+
+### `arrange` example
+
+R arranges in ascending order by default
+
+
+```r
+nhanes %&gt;% 
+* group_by(age_decade, gender) %&gt;%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %&gt;% 
+  arrange(mean_active_days) 
+```
+
+```
+## # A tibble: 18 x 3
+## # Groups:   age_decade [9]
+##    age_decade gender mean_active_days
+##    &lt;chr&gt;      &lt;chr&gt;             &lt;dbl&gt;
+##  1 30-39      male               3.32
+##  2 20-29      male               3.37
+##  3 20-29      female             3.58
+##  4 30-39      female             3.60
+##  5 50-59      male               3.62
+##  6 60-69      male               3.68
+##  7 0-9        female             3.73
+##  8 40-49      male               3.80
+##  9 70+        male               3.81
+## 10 &lt;NA&gt;       male               3.86
+## 11 40-49      female             3.88
+## 12 10-19      female             3.89
+## 13 60-69      female             3.92
+## 14 50-59      female             3.97
+## 15 0-9        male               3.97
+## 16 &lt;NA&gt;       female             4.01
+## 17 10-19      male               4.02
+## 18 70+        female             4.04
+```
+
+---
+
+### `arrange` example
+
+You can also arrange in descending order
+
+
+
+```r
+nhanes %&gt;% 
+* group_by(age_decade, gender) %&gt;%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %&gt;% 
+  arrange(desc(mean_active_days)) 
+```
+
+```
+## # A tibble: 18 x 3
+## # Groups:   age_decade [9]
+##    age_decade gender mean_active_days
+##    &lt;chr&gt;      &lt;chr&gt;             &lt;dbl&gt;
+##  1 70+        female             4.04
+##  2 10-19      male               4.02
+##  3 &lt;NA&gt;       female             4.01
+##  4 0-9        male               3.97
+##  5 50-59      female             3.97
+##  6 60-69      female             3.92
+##  7 10-19      female             3.89
+##  8 40-49      female             3.88
+##  9 &lt;NA&gt;       male               3.86
+## 10 70+        male               3.81
+## 11 40-49      male               3.80
+## 12 0-9        female             3.73
+## 13 60-69      male               3.68
+## 14 50-59      male               3.62
+## 15 30-39      female             3.60
+## 16 20-29      female             3.58
+## 17 20-29      male               3.37
+## 18 30-39      male               3.32
+```
+
+---
+
+## Crosstabs
+
+Sometimes you want your results in a crosstab. We'll use the `tabyl` function in `janitor` package to make crosstabs automatically.
+
+--
+
+
+```r
+nhanes %&gt;% 
+  tabyl(gender, age_decade) 
+```
+
+```
+##  gender 0-9 10-19 20-29 30-39 40-49 50-59 60-69 70+ NA_
+##  female 653   684   681   677   681   623   480 348 193
+##    male 738   690   675   661   717   681   439 239 140
+```
+
+---
+
+### `adorn_` functions
+
+`janitor` has a set of functions that all start with `adorn_` that add a number of things to our crosstabs. You call them after `tabyl`.
+
+*Note: I'm using the `kable()` function here just because it prints crosstabs in an easy to read format.*
+
+---
+
+### Add totals
+
+
+```r
+nhanes %&gt;% 
+  tabyl(gender, age_decade) %&gt;% 
+* adorn_totals(c("row", "col"))
+```
+
+```
+##  gender  0-9 10-19 20-29 30-39 40-49 50-59 60-69 70+ NA_ Total
+##  female  653   684   681   677   681   623   480 348 193  5020
+##    male  738   690   675   661   717   681   439 239 140  4980
+##   Total 1391  1374  1356  1338  1398  1304   919 587 333 10000
+```
+
+
+
+---
+
+### Add percentages
+
+
+
+```r
+nhanes %&gt;% 
+  tabyl(gender, age_decade) %&gt;% 
+  adorn_totals(c("row", "col")) %&gt;% 
+* adorn_percentages()
+```
+
+```
+##  gender       0-9     10-19     20-29     30-39     40-49     50-59
+##  female 0.1300797 0.1362550 0.1356574 0.1348606 0.1356574 0.1241036
+##    male 0.1481928 0.1385542 0.1355422 0.1327309 0.1439759 0.1367470
+##   Total 0.1391000 0.1374000 0.1356000 0.1338000 0.1398000 0.1304000
+##       60-69        70+        NA_ Total
+##  0.09561753 0.06932271 0.03844622     1
+##  0.08815261 0.04799197 0.02811245     1
+##  0.09190000 0.05870000 0.03330000     1
+```
+
+---
+
+### Format percentages
+
+
+```r
+nhanes %&gt;% 
+  tabyl(gender, age_decade) %&gt;% 
+  adorn_totals(c("row", "col")) %&gt;% 
+  adorn_percentages() %&gt;% 
+* adorn_pct_formatting()
+```
+
+```
+##  gender   0-9 10-19 20-29 30-39 40-49 50-59 60-69  70+  NA_  Total
+##  female 13.0% 13.6% 13.6% 13.5% 13.6% 12.4%  9.6% 6.9% 3.8% 100.0%
+##    male 14.8% 13.9% 13.6% 13.3% 14.4% 13.7%  8.8% 4.8% 2.8% 100.0%
+##   Total 13.9% 13.7% 13.6% 13.4% 14.0% 13.0%  9.2% 5.9% 3.3% 100.0%
+```
+
+
+
+---
+
+### Include n alongside percentages
+
+
+```r
+nhanes %&gt;% 
+  tabyl(gender, age_decade) %&gt;% 
+  adorn_totals(c("row", "col")) %&gt;% 
+  adorn_percentages() %&gt;% 
+  adorn_pct_formatting() %&gt;% 
+* adorn_ns()
+```
+
+```
+##  gender          0-9        10-19        20-29        30-39        40-49
+##  female 13.0%  (653) 13.6%  (684) 13.6%  (681) 13.5%  (677) 13.6%  (681)
+##    male 14.8%  (738) 13.9%  (690) 13.6%  (675) 13.3%  (661) 14.4%  (717)
+##   Total 13.9% (1391) 13.7% (1374) 13.6% (1356) 13.4% (1338) 14.0% (1398)
+##         50-59      60-69        70+        NA_          Total
+##  12.4%  (623) 9.6% (480) 6.9% (348) 3.8% (193) 100.0%  (5020)
+##  13.7%  (681) 8.8% (439) 4.8% (239) 2.8% (140) 100.0%  (4980)
+##  13.0% (1304) 9.2% (919) 5.9% (587) 3.3% (333) 100.0% (10000)
+```
+
+
+---
+
+### Add title
+
+
+```r
+nhanes %&gt;% 
+  tabyl(gender, age_decade) %&gt;% 
+  adorn_totals(c("row", "col")) %&gt;% 
+  adorn_percentages() %&gt;% 
+  adorn_pct_formatting() %&gt;% 
+  adorn_ns() %&gt;% 
+* adorn_title()
+```
+
+```
+##           age_decade                                                    
+##  gender          0-9        10-19        20-29        30-39        40-49
+##  female 13.0%  (653) 13.6%  (684) 13.6%  (681) 13.5%  (677) 13.6%  (681)
+##    male 14.8%  (738) 13.9%  (690) 13.6%  (675) 13.3%  (661) 14.4%  (717)
+##   Total 13.9% (1391) 13.7% (1374) 13.6% (1356) 13.4% (1338) 14.0% (1398)
+##                                                              
+##         50-59      60-69        70+        NA_          Total
+##  12.4%  (623) 9.6% (480) 6.9% (348) 3.8% (193) 100.0%  (5020)
+##  13.7%  (681) 8.8% (439) 4.8% (239) 2.8% (140) 100.0%  (4980)
+##  13.0% (1304) 9.2% (919) 5.9% (587) 3.3% (333) 100.0% (10000)
+```
+
+---
+
+
+
+
+### Three (or more) way crosstabs
+
+You can also do three (or more) way crosstabs automatically by adding more variables to the `tabyl` function.
+
+
+```r
+nhanes %&gt;% 
+* tabyl(gender, age_decade, education) %&gt;%
+  adorn_totals(c("row", "col")) %&gt;% 
+  adorn_percentages() %&gt;% 
+  adorn_pct_formatting() %&gt;% 
+  adorn_ns() %&gt;% 
+  adorn_title() 
+```
+
+```
+## $`8th Grade`
+##         age_decade                                                    
+##  gender        0-9    10-19     20-29      30-39      40-49      50-59
+##  female   0.0% (0) 0.0% (0) 9.1% (19) 18.7% (39) 16.3% (34) 15.3% (32)
+##    male   0.0% (0) 0.0% (0) 7.4% (18) 14.0% (34) 22.3% (54) 14.0% (34)
+##   Total   0.0% (0) 0.0% (0) 8.2% (37) 16.2% (73) 19.5% (88) 14.6% (66)
+##                                               
+##       60-69        70+        NA_        Total
+##  12.4% (26) 17.7% (37) 10.5% (22) 100.0% (209)
+##  16.9% (41) 10.3% (25) 14.9% (36) 100.0% (242)
+##  14.9% (67) 13.7% (62) 12.9% (58) 100.0% (451)
+## 
+## $`9 - 11th Grade`
+##         age_decade                                             
+##  gender        0-9    10-19       20-29       30-39       40-49
+##  female   0.0% (0) 0.0% (0) 17.9%  (72) 15.2%  (61) 14.9%  (60)
+##    male   0.0% (0) 0.0% (0) 20.6% (100) 16.7%  (81) 22.2% (108)
+##   Total   0.0% (0) 0.0% (0) 19.4% (172) 16.0% (142) 18.9% (168)
+##                                                          
+##        50-59      60-69        70+       NA_        Total
+##  18.7%  (75) 12.4% (50) 12.9% (52) 8.0% (32) 100.0% (402)
+##  18.3%  (89)  9.7% (47)  9.1% (44) 3.5% (17) 100.0% (486)
+##  18.5% (164) 10.9% (97) 10.8% (96) 5.5% (49) 100.0% (888)
+## 
+## $`College Grad`
+##         age_decade                                             
+##  gender        0-9    10-19       20-29       30-39       40-49
+##  female   0.0% (0) 0.0% (0) 14.8% (163) 21.2% (233) 25.7% (282)
+##    male   0.0% (0) 0.0% (0) 13.0% (130) 21.4% (214) 19.9% (199)
+##   Total   0.0% (0) 0.0% (0) 14.0% (293) 21.3% (447) 22.9% (481)
+##                                                            
+##        50-59       60-69        70+       NA_         Total
+##  19.7% (217) 10.9% (120) 5.2%  (57) 2.5% (27) 100.0% (1099)
+##  20.0% (200) 16.0% (160) 6.4%  (64) 3.2% (32) 100.0%  (999)
+##  19.9% (417) 13.3% (280) 5.8% (121) 2.8% (59) 100.0% (2098)
+## 
+## $`High School`
+##         age_decade                                             
+##  gender        0-9    10-19       20-29       30-39       40-49
+##  female   0.0% (0) 0.0% (0) 20.3% (156) 13.6% (105) 17.5% (135)
+##    male   0.0% (0) 0.0% (0) 21.0% (157) 15.7% (117) 22.5% (168)
+##   Total   0.0% (0) 0.0% (0) 20.6% (313) 14.6% (222) 20.0% (303)
+##                                                             
+##        50-59       60-69         70+       NA_         Total
+##  15.1% (116) 13.8% (106) 12.5%  (96) 7.3% (56) 100.0%  (770)
+##  20.7% (155) 10.0%  (75)  5.9%  (44) 4.1% (31) 100.0%  (747)
+##  17.9% (271) 11.9% (181)  9.2% (140) 5.7% (87) 100.0% (1517)
+## 
+## $`Some College`
+##         age_decade                                             
+##  gender        0-9    10-19       20-29       30-39       40-49
+##  female   0.0% (0) 0.0% (0) 22.6% (271) 20.0% (239) 14.0% (167)
+##    male   0.0% (0) 0.0% (0) 24.9% (266) 19.9% (213) 17.6% (188)
+##   Total   0.0% (0) 0.0% (0) 23.7% (537) 19.9% (452) 15.7% (355)
+##                                                            
+##        50-59       60-69        70+       NA_         Total
+##  15.3% (183) 14.8% (177) 8.7% (104) 4.7% (56) 100.0% (1197)
+##  19.0% (203) 10.8% (116) 5.8%  (62) 2.1% (22) 100.0% (1070)
+##  17.0% (386) 12.9% (293) 7.3% (166) 3.4% (78) 100.0% (2267)
+## 
+## $NA_
+##           age_decade                                                 
+##  gender          0-9        10-19    20-29    30-39    40-49    50-59
+##  female 48.6%  (653) 50.9%  (684) 0.0% (0) 0.0% (0) 0.2% (3) 0.0% (0)
+##    male 51.4%  (738) 48.1%  (690) 0.3% (4) 0.1% (2) 0.0% (0) 0.0% (0)
+##   Total 50.1% (1391) 49.4% (1374) 0.1% (4) 0.1% (2) 0.1% (3) 0.0% (0)
+##                                          
+##     60-69      70+      NA_         Total
+##  0.1% (1) 0.1% (2) 0.0% (0) 100.0% (1343)
+##  0.0% (0) 0.0% (0) 0.1% (2) 100.0% (1436)
+##  0.0% (1) 0.1% (2) 0.1% (2) 100.0% (2779)
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

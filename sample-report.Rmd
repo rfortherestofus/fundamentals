@@ -8,6 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+
 # Introduction
 
 This report is the best report ever. Pretty much the **bees' knees**. Can't say that I've *ever* seen a better report.
