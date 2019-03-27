@@ -3,6 +3,8 @@ title: "Fundamentals of Data Wrangling and Analysis in R"
 output:
   xaringan::moon_reader:
     # df_print: paged
+    # self-contained: true
+    # chakra: libs/remark-latest.min.js
     css: ["style.css", "default"]
     lib_dir: libs
     nature:
@@ -20,7 +22,9 @@ output:
 knitr::opts_chunk$set(eval = F, 
                       warning = F,
                       message = F,
-                      rows.print = 5)
+                      rows.print = 5,
+                      max.print = 100,
+                      pages.print = 5)
 
 library(tidyverse)
 library(skimr)
