@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
     <title>Fundamentals of Data Wrangling and Analysis in R</title>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <script src="libs/kePrint-0.0.1/kePrint.js"></script>
     <link rel="stylesheet" href="style.css" type="text/css" />
@@ -25,14 +25,176 @@ class: center, middle, inverse, title-slide
 
 
 
-# Intro Data Set
-
-- NHANES
-- Random Tip: `clean_names` function
+# Getting Started
 
 ---
 
-# Update Packages
+## Update Packages
+
+--
+
+Option #1: 
+
+
+```r
+update.packages()
+```
+
+---
+
+## Update Packages
+
+--
+
+Option #2: 
+
+![](images/update-packages.gif)
+
+
+
+
+
+
+
+---
+
+## Make your variables easy to work with
+
+
+
+
+```r
+bad_names &lt;- read_csv("data/badnames.csv")
+```
+
+
+```r
+bad_names
+```
+
+```
+## # A tibble: 10 x 3
+##       ID `Age Decade` gender    
+##    &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;     
+##  1     1 10-19        Male      
+##  2     2 20-29        Female    
+##  3     3 20-29        Non-Binary
+##  4     4 0-9          Male      
+##  5     5 60-69        Female    
+##  6     6 70+          Non-Binary
+##  7     7 20-29        Male      
+##  8     8 20-29        Male      
+##  9     9 0-9          Non-Binary
+## 10    10 60-69        Female
+```
+
+
+
+---
+
+## Make your variables easy to work with
+
+
+```r
+bad_names %&gt;% 
+  skim(`Age Decade`)
+```
+
+```
+## Skim summary statistics
+##  n obs: 10 
+##  n variables: 3 
+## 
+## ── Variable type:character ──────────────────────────────────────────────────────────────────────────────────────────────────
+##    variable missing complete  n min max empty n_unique
+##  Age Decade       0       10 10   3   5     0        5
+```
+
+---
+
+## `clean_names` function
+
+
+
+
+```r
+good_names &lt;- read_csv("data/badnames.csv") %&gt;% 
+* clean_names()
+```
+
+
+```r
+good_names
+```
+
+```
+## # A tibble: 10 x 3
+##       id age_decade gender    
+##    &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;     
+##  1     1 10-19      Male      
+##  2     2 20-29      Female    
+##  3     3 20-29      Non-Binary
+##  4     4 0-9        Male      
+##  5     5 60-69      Female    
+##  6     6 70+        Non-Binary
+##  7     7 20-29      Male      
+##  8     8 20-29      Male      
+##  9     9 0-9        Non-Binary
+## 10    10 60-69      Female
+```
+
+---
+
+## `clean_names` function
+
+
+```r
+good_names %&gt;% 
+  skim(age_decade)
+```
+
+```
+## Skim summary statistics
+##  n obs: 10 
+##  n variables: 3 
+## 
+## ── Variable type:character ──────────────────────────────────────────────────────────────────────────────────────────────────
+##    variable missing complete  n min max empty n_unique
+##  age_decade       0       10 10   3   5     0        5
+```
+
+
+---
+
+
+## NHANES
+
+.pull-left[
+*"The National Health and Nutrition Examination Survey (NHANES) is a program of studies designed to assess the health and nutritional status of adults and children in the United States. The survey is unique in that it combines interviews and physical examinations."*
+]
+
+.pull-right[
+![](images/nhanes.jpg)
+]
+
+???
+
+Website: https://www.cdc.gov/nchs/nhanes/index.htm
+Video: https://www.youtube.com/watch?v=GmnN2r5J0YA
+R package: https://cran.r-project.org/web/packages/NHANES/index.html
+
+
+---
+
+## NHANES
+
+
+```r
+nhanes &lt;- read_csv("data/nhanes.csv") %&gt;% 
+  clean_names()
+```
+
+
 
 ---
 
@@ -79,13 +241,13 @@ nhanes %&gt;%
 
 class: center, middle
 
-## The Pipe
+## The pipe
 
 ![](images/pipe.png)
 
 ---
 
-### The Pipe
+### The pipe
 
 Using the pipe, we can start with a data frame and then conduct a series of functions all at once. Read each pipe as "then."
 
@@ -101,16 +263,17 @@ nhanes %&gt;%
 
 ---
 
-### The Pipe
+### The pipe
 
 Using the pipe doesn't change anything about our data frame, it just displays the results. To change our data frame, we use the assignment operator (`&lt;-`). 
 
 
 ```r
-bmi_2009_2010 &lt;- nhanes %&gt;% 
-  filter(survey_yr == "2009_10") %&gt;% 
-  group_by(education) %&gt;% 
-  summarize(mean_bmi = mean(bmi, na.rm = TRUE))
+phys_activity_by_age &lt;- nhanes %&gt;% 
+* group_by(age_decade) %&gt;%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %&gt;% 
+  drop_na()
 ```
 
 
@@ -547,9 +710,6 @@ nhanes %&gt;%
   select(gender)
 ```
 
---
-
-
 ```
 ## # A tibble: 5,020 x 1
 ##    gender
@@ -580,9 +740,6 @@ nhanes %&gt;%
   select(health_gen)
 ```
 
---
-
-
 ```
 ## # A tibble: 4,583 x 1
 ##    health_gen
@@ -599,6 +756,7 @@ nhanes %&gt;%
 ## 10 Excellent 
 ## # … with 4,573 more rows
 ```
+
 
 ---
 
@@ -703,27 +861,23 @@ You can chain together multiple `filter` functions. Doing it this way, we don't 
 
 ```r
 nhanes %&gt;% 
+* filter(gender == "male" &amp; health_gen %in% c("Good", "VGood", "Excellent")) %&gt;%
+  select(gender, health_gen)
+```
+
+
+--
+
+
+```r
+nhanes %&gt;% 
 * filter(gender == "male") %&gt;%
 * filter(health_gen %in% c("Good", "VGood", "Excellent")) %&gt;%
   select(gender, health_gen)
 ```
 
-```
-## # A tibble: 1,993 x 2
-##    gender health_gen
-##    &lt;chr&gt;  &lt;chr&gt;     
-##  1 male   Good      
-##  2 male   Good      
-##  3 male   Good      
-##  4 male   Good      
-##  5 male   Good      
-##  6 male   Good      
-##  7 male   Good      
-##  8 male   Excellent 
-##  9 male   Excellent 
-## 10 male   Excellent 
-## # … with 1,983 more rows
-```
+
+
 
 
 
@@ -736,28 +890,25 @@ Use &lt;, &gt;, &lt;=, and =&gt; for numeric data.
 
 ```r
 nhanes %&gt;% 
-* filter(age &gt; 50)
+* filter(age &gt; 50) %&gt;%
+  select(age)
 ```
 
 ```
-## # A tibble: 2,972 x 22
-##       id survey_yr gender   age age_decade race1 education marital_status
-##    &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;         
-##  1 51654 2009_10   male      66 60-69      White Some Col… Married       
-##  2 51656 2009_10   male      58 50-59      White College … Divorced      
-##  3 51657 2009_10   male      54 50-59      White 9 - 11th… Married       
-##  4 51666 2009_10   female    58 50-59      Mexi… High Sch… Married       
-##  5 51678 2009_10   male      60 60-69      White High Sch… Married       
-##  6 51685 2009_10   female    56 50-59      White College … Married       
-##  7 51685 2009_10   female    56 50-59      White College … Married       
-##  8 51691 2009_10   female    57 50-59      White High Sch… Married       
-##  9 51692 2009_10   male      54 50-59      Hisp… College … Divorced      
-## 10 51692 2009_10   male      54 50-59      Hisp… College … Divorced      
-## # … with 2,962 more rows, and 14 more variables: hh_income &lt;chr&gt;,
-## #   home_own &lt;chr&gt;, work &lt;chr&gt;, weight &lt;dbl&gt;, height &lt;dbl&gt;, bmi &lt;dbl&gt;,
-## #   health_gen &lt;chr&gt;, days_phys_hlth_bad &lt;dbl&gt;, days_ment_hlth_bad &lt;dbl&gt;,
-## #   sleep_hrs_night &lt;dbl&gt;, phys_active &lt;chr&gt;, phys_active_days &lt;dbl&gt;,
-## #   tv_hrs_day &lt;lgl&gt;, smoke_now &lt;chr&gt;
+## # A tibble: 2,972 x 1
+##      age
+##    &lt;dbl&gt;
+##  1    66
+##  2    58
+##  3    54
+##  4    58
+##  5    60
+##  6    56
+##  7    56
+##  8    57
+##  9    54
+## 10    54
+## # … with 2,962 more rows
 ```
 
 ---
@@ -1225,8 +1376,6 @@ nhanes %&gt;%
 
 `janitor` has a set of functions that all start with `adorn_` that add a number of things to our crosstabs. You call them after `tabyl`.
 
-*Note: I'm using the `kable()` function here just because it prints crosstabs in an easy to read format.*
-
 ---
 
 ### Add totals
@@ -1439,6 +1588,22 @@ nhanes %&gt;%
 ##  0.1% (1) 0.1% (2) 0.0% (0) 100.0% (1343)
 ##  0.0% (0) 0.0% (0) 0.1% (2) 100.0% (1436)
 ##  0.0% (1) 0.1% (2) 0.1% (2) 100.0% (2779)
+```
+
+
+---
+
+# Create new data frames
+
+Sometimes you want to save the results of your work to a new data frame. 
+
+
+```r
+phys_activity_by_age &lt;- nhanes %&gt;% 
+* group_by(age_decade) %&gt;%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %&gt;% 
+  drop_na()
 ```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

@@ -10,10 +10,6 @@ output:
       highlightLines: true
       countIncrementalSlides: false
       ratio: 16:9
-    # html_document:
-    #     toc: true
-    #     toc_float: true
-    #     df_print: paged
 
 ---
 
@@ -47,14 +43,121 @@ nhanes <- read_csv(here("data/nhanes.csv")) %>%
 
 ```
 
-# Intro Data Set
-
-- NHANES
-- Random Tip: `clean_names` function
+# Getting Started
 
 ---
 
-# Update Packages
+## Update Packages
+
+--
+
+Option #1: 
+
+```{r eval = F}
+update.packages()
+```
+
+---
+
+## Update Packages
+
+--
+
+Option #2: 
+
+![](images/update-packages.gif)
+
+
+
+
+
+
+
+---
+
+## Make your variables easy to work with
+
+```{r eval = T, echo = F}
+bad_names <- read_csv(here("data/badnames.csv"))
+```
+
+```{r}
+bad_names <- read_csv("data/badnames.csv")
+```
+
+```{r eval = T}
+bad_names
+```
+
+
+
+---
+
+## Make your variables easy to work with
+
+```{r eval = T}
+bad_names %>% 
+  skim(`Age Decade`)
+```
+
+---
+
+## `clean_names` function
+
+```{r eval = T, echo = F}
+good_names <- read_csv(here("data/badnames.csv")) %>% 
+  clean_names()
+```
+
+```{r}
+good_names <- read_csv("data/badnames.csv") %>% 
+  clean_names() #<<
+```
+
+```{r eval = T}
+good_names
+```
+
+---
+
+## `clean_names` function
+
+```{r eval = T}
+good_names %>% 
+  skim(age_decade)
+```
+
+
+---
+
+
+## NHANES
+
+.pull-left[
+*"The National Health and Nutrition Examination Survey (NHANES) is a program of studies designed to assess the health and nutritional status of adults and children in the United States. The survey is unique in that it combines interviews and physical examinations."*
+]
+
+.pull-right[
+![](images/nhanes.jpg)
+]
+
+???
+
+Website: https://www.cdc.gov/nchs/nhanes/index.htm
+Video: https://www.youtube.com/watch?v=GmnN2r5J0YA
+R package: https://cran.r-project.org/web/packages/NHANES/index.html
+
+
+---
+
+## NHANES
+
+```{r eval = F}
+nhanes <- read_csv("data/nhanes.csv") %>% 
+  clean_names()
+```
+
+
 
 ---
 
@@ -100,13 +203,13 @@ nhanes %>%
 
 class: center, middle
 
-## The Pipe
+## The pipe
 
 ![](images/pipe.png)
 
 ---
 
-### The Pipe
+### The pipe
 
 Using the pipe, we can start with a data frame and then conduct a series of functions all at once. Read each pipe as "then."
 
@@ -122,15 +225,16 @@ nhanes %>%
 
 ---
 
-### The Pipe
+### The pipe
 
 Using the pipe doesn't change anything about our data frame, it just displays the results. To change our data frame, we use the assignment operator (`<-`). 
 
 ```{r}
-bmi_2009_2010 <- nhanes %>% 
-  filter(survey_yr == "2009_10") %>% 
-  group_by(education) %>% 
-  summarize(mean_bmi = mean(bmi, na.rm = TRUE))
+phys_activity_by_age <- nhanes %>% 
+  group_by(age_decade) %>% #<<
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %>% 
+  drop_na()
 ```
 
 
@@ -337,15 +441,7 @@ comp_table %>%
 
 ### `filter`
 
-```{r}
-nhanes %>% 
-  filter(gender == "female") %>% #<<
-  select(gender)
-```
-
---
-
-```{r eval = T, echo = F}
+```{r eval = T}
 nhanes %>% 
   filter(gender == "female") %>% #<<
   select(gender)
@@ -357,19 +453,12 @@ nhanes %>%
 
 ### `filter`
 
-```{r}
+```{r eval = T}
 nhanes %>% 
   filter(health_gen != "Good") %>% #<<
   select(health_gen)
 ```
 
---
-
-```{r eval = T, echo = F}
-nhanes %>% 
-  filter(health_gen != "Good") %>% #<<
-  select(health_gen) 
-```
 
 ---
 
@@ -424,12 +513,24 @@ nhanes %>%
 
 You can chain together multiple `filter` functions. Doing it this way, we don't have create complex logic in one line.
 
-```{r eval = T}
+```{r eval = F}
+nhanes %>% 
+  filter(gender == "male" & health_gen %in% c("Good", "VGood", "Excellent")) %>% #<<
+  select(gender, health_gen)
+```
+
+
+--
+
+```{r eval = F}
 nhanes %>% 
   filter(gender == "male") %>% #<<
   filter(health_gen %in% c("Good", "VGood", "Excellent")) %>% #<<
   select(gender, health_gen)
 ```
+
+
+
 
 
 
@@ -441,7 +542,8 @@ Use <, >, <=, and => for numeric data.
 
 ```{r eval = T}
 nhanes %>% 
-  filter(age > 50) #<<
+  filter(age > 50) %>% #<<
+  select(age)
 ```
 
 ---
@@ -680,8 +782,6 @@ nhanes %>%
 
 `janitor` has a set of functions that all start with `adorn_` that add a number of things to our crosstabs. You call them after `tabyl`.
 
-*Note: I'm using the `kable()` function here just because it prints crosstabs in an easy to read format.*
-
 ---
 
 ### Add totals
@@ -769,5 +869,20 @@ nhanes %>%
   adorn_ns() %>% 
   adorn_title() 
 
+```
+
+
+---
+
+# Create new data frames
+
+Sometimes you want to save the results of your work to a new data frame. 
+
+```{r}
+phys_activity_by_age <- nhanes %>% 
+  group_by(age_decade) %>% #<<
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %>% 
+  drop_na()
 ```
 

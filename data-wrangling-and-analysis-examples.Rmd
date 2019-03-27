@@ -1,0 +1,496 @@
+---
+title: "Fundamentals of Data Wrangling and Analysis Examples"
+author: "R for the Rest of Us"
+output: 
+    html_document:
+        css: slides/style.css
+        toc: true
+        toc_float: true
+        df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(kableExtra)
+```
+
+# Import Data
+
+```{r}
+nhanes <- read_csv("data/nhanes.csv") %>%
+  clean_names()
+```
+
+
+# `select`
+
+```{r}
+nhanes %>%
+  select(age)
+```
+
+
+
+
+## Other ways we can `select` variables
+
+Select multiple variables by listing them:
+
+```{r}
+nhanes %>%
+  select(height, weight)
+```
+
+
+
+## Other ways we can `select` variables
+
+You can use `one_of()` to do the same thing:
+
+```{r}
+nhanes %>%
+  select(one_of(c("height", "weight")))
+```
+
+
+
+## Other ways we can `select` variables
+
+`contain()` selects variable with certain text in the variable name:
+
+
+```{r}
+nhanes %>%
+  select(contains("age"))
+```
+
+
+
+## Other ways we can `select` variables
+
+You can select a range of columns using the var1:var2 pattern
+
+
+```{r}
+nhanes %>%
+  select(weight:bmi)
+```
+
+
+
+## Other ways we can `select` variables
+
+Drop variables using the -var format:
+
+
+```{r}
+nhanes %>%
+  select(-id)
+```
+
+
+
+## Other ways we can `select` variables
+
+Drop a set of variables using the -(var1:var2) format:
+
+
+```{r}
+nhanes %>%
+  select(-(id:education))
+```
+
+# `mutate`
+
+## 1. Create a **new variable with a specific value**
+
+```{r}
+nhanes %>%
+  mutate(country = "United States") %>% 
+  select(country)
+```
+
+
+
+
+## 2. Create a **new variable based on other variables**
+
+```{r}
+nhanes %>%
+  mutate(height_inches = height / 2.54) %>% 
+  select(contains("height"))
+```
+
+
+
+
+
+
+## 3. Change an **existing variable**
+
+```{r}
+nhanes %>%
+  mutate(bmi = round(bmi, digits = 1)) %>% 
+  select(bmi)
+```
+
+
+
+# `filter`
+
+
+## `filter`
+
+```{r}
+nhanes %>% 
+  filter(gender == "female") %>%
+  select(gender)
+```
+
+
+
+
+
+
+## `filter`
+
+```{r}
+nhanes %>% 
+  filter(health_gen != "Good") %>%
+  select(health_gen)
+```
+
+
+
+## `filter`
+
+```{r}
+nhanes %>% 
+  filter(health_gen != "Good" | health_gen != "VGood" | health_gen != "Excellent") %>%
+  select(health_gen)
+```
+
+
+
+
+## `filter`
+
+```{r}
+nhanes %>% 
+  filter(health_gen %in% c("Good", "VGood", "Excellent")) %>%
+  select(health_gen)
+```
+
+
+
+
+## `filter`
+
+You can chain together multiple `filter` functions. Doing it this way, we don't have create complex logic in one line.
+
+```{r}
+nhanes %>% 
+  filter(gender == "male") %>%
+  filter(health_gen %in% c("Good", "VGood", "Excellent")) %>%
+  select(gender, health_gen)
+```
+
+
+
+
+
+## `filter`
+
+```{r}
+nhanes %>% 
+  filter(age > 50)
+```
+
+
+
+
+## `filter`
+
+You can drop `NAs` with `!is.na()` 
+
+```{r}
+nhanes %>% 
+  filter(age > 50) %>% 
+  filter(!is.na(marital_status)) %>%
+  select(age, marital_status)
+```
+
+
+
+
+
+## `filter`
+
+You can also drop `NAs` with `drop_na()`
+
+```{r}
+nhanes %>% 
+  filter(age > 50) %>% 
+  drop_na(marital_status) %>%
+  select(age, marital_status)
+```
+
+
+
+# `summarize`
+
+This doesn't work! Notice what the result is.
+
+```{r}
+nhanes %>% 
+  summarize(mean_active_days = mean(phys_active_days))
+```
+
+
+
+
+
+## `summarize`
+
+Add na.rm = TRUE to make this work.
+
+
+```{r}
+nhanes %>% 
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE))
+```
+
+
+
+
+## `summarize`
+
+
+You can have multiple arguments in each usage of `summarize`.
+
+```{r}
+nhanes %>% 
+  summarize(mean_active_days = mean(phys_active_days, na.rm = TRUE),
+            median_active_days = median(phys_active_days, na.rm = TRUE),
+            number_of_responses = n())
+```
+
+
+
+
+# `group_by`
+
+
+```{r}
+nhanes %>% 
+  group_by(age_decade) %>%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) 
+```
+
+
+
+
+
+
+
+## `group_by` example
+
+`group_by` works for multiple groups.
+
+```{r}
+nhanes %>% 
+  group_by(age_decade, gender) %>%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) 
+```
+
+
+
+
+## `count`
+
+If you just want to count the number of things per group, you can use `count`.
+
+
+```{r}
+nhanes %>% 
+  count(age_decade)
+```
+
+
+
+
+## `count`
+
+You can also count by multiple groups.
+
+```{r}
+nhanes %>% 
+  count(age_decade, gender)
+```
+
+
+
+
+
+# `arrange`
+
+
+
+## `arrange` example
+
+R arranges in ascending order by default
+
+```{r}
+nhanes %>% 
+  group_by(age_decade, gender) %>%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %>% 
+  arrange(mean_active_days) 
+```
+
+
+
+## `arrange` example
+
+You can also arrange in descending order
+
+
+```{r}
+nhanes %>% 
+  group_by(age_decade, gender) %>%
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %>% 
+  arrange(desc(mean_active_days)) 
+```
+
+
+
+# Crosstabs
+
+Sometimes you want your results in a crosstab. We'll use the `tabyl` function in `janitor` package to make crosstabs automatically.
+
+
+```{r}
+nhanes %>% 
+  tabyl(gender, age_decade) 
+```
+
+
+
+## `adorn_` functions
+
+`janitor` has a set of functions that all start with `adorn_` that add a number of things to our crosstabs. You call them after `tabyl`.
+
+
+## Add totals
+
+```{r}
+
+nhanes %>% 
+  tabyl(gender, age_decade) %>% 
+  adorn_totals(c("row", "col"))
+  
+
+```
+
+
+
+
+
+## Add percentages
+
+
+```{r}
+nhanes %>% 
+  tabyl(gender, age_decade) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages()
+```
+
+
+
+## Format percentages
+
+```{r}
+nhanes %>% 
+  tabyl(gender, age_decade) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages() %>% 
+  adorn_pct_formatting() 
+```
+
+
+
+
+
+## Include n alongside percentages
+
+```{r}
+nhanes %>% 
+  tabyl(gender, age_decade) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages() %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns()
+```
+
+
+
+
+## Add title
+
+```{r}
+nhanes %>% 
+  tabyl(gender, age_decade) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages() %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
+  adorn_title()
+```
+
+
+
+
+
+
+## Three (or more) way crosstabs
+
+You can also do three (or more) way crosstabs automatically by adding more variables to the `tabyl` function.
+
+```{r}
+nhanes %>% 
+  tabyl(gender, age_decade, education) %>%
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages() %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
+  adorn_title() 
+
+```
+
+# Create new data frames
+
+Sometimes you want to save the results of your work to a new data frame. 
+
+```{r}
+phys_activity_by_age <- nhanes %>% 
+  group_by(age_decade) %>% #<<
+  summarize(mean_active_days = mean(phys_active_days,
+                                    na.rm = TRUE)) %>% 
+  drop_na()
+```
+
+```{r}
+phys_activity_by_age
+```
+
