@@ -5,32 +5,49 @@ output:
     html_document:
         css: slides/style.css
         toc: true
+        toc_depth: 1
         toc_float: true
         df_print: paged
 ---
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      warning = FALSE,
-                      message = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
+
+The examples are part of the Fundamentals of R course. For more, see the [R for the Rest of Us website](https://rfortherestofus.com/courses/fundamentals/).
+
+# Load Packages
+
+Let's load the packages we need. These include `tidyverse` (especially the `dplyr` package) and `janitor`. 
 
 ```{r}
 library(tidyverse)
 library(janitor)
-library(kableExtra)
 ```
 
 # Import Data
+
+Let's import our data using `read_csv`. Note that the NHANES data is in the data directory so we need to include that.
 
 ```{r}
 nhanes <- read_csv("data/nhanes.csv") %>%
   clean_names()
 ```
 
+Let's see what our data looks like.
 
-# `select`
+```{r}
+nhanes
+```
+
+
+
+# select
+
+![](slides/images/select.png)
+
+With `select` we can select variables from the larger data frame.
 
 ```{r}
 nhanes %>%
@@ -38,11 +55,7 @@ nhanes %>%
 ```
 
 
-
-
-## Other ways we can `select` variables
-
-Select multiple variables by listing them:
+We can also use `select` for multiple variables:
 
 ```{r}
 nhanes %>%
@@ -50,21 +63,14 @@ nhanes %>%
 ```
 
 
-
-## Other ways we can `select` variables
-
-You can use `one_of()` to do the same thing:
+We can use `one_of()` to do the same thing:
 
 ```{r}
 nhanes %>%
   select(one_of(c("height", "weight")))
 ```
 
-
-
-## Other ways we can `select` variables
-
-`contain()` selects variable with certain text in the variable name:
+Used within `select`, the `contains` function selects variable with certain text in the variable name:
 
 
 ```{r}
@@ -73,10 +79,7 @@ nhanes %>%
 ```
 
 
-
-## Other ways we can `select` variables
-
-You can select a range of columns using the var1:var2 pattern
+We can `select` a range of columns using the var1:var2 pattern
 
 
 ```{r}
@@ -86,9 +89,7 @@ nhanes %>%
 
 
 
-## Other ways we can `select` variables
-
-Drop variables using the -var format:
+We can drop variables using the -var format:
 
 
 ```{r}
@@ -98,9 +99,7 @@ nhanes %>%
 
 
 
-## Other ways we can `select` variables
-
-Drop a set of variables using the -(var1:var2) format:
+We can drop a set of variables using the -(var1:var2) format:
 
 
 ```{r}
@@ -108,20 +107,24 @@ nhanes %>%
   select(-(id:education))
 ```
 
-# `mutate`
+# mutate
 
-## 1. Create a **new variable with a specific value**
+![](slides/images/mutate.png)
+
+We `mutate` we make new variables or change existing ones. 
+
+We can use `mutate` in three ways:
+
+Create a **new variable with a specific value**
 
 ```{r}
 nhanes %>%
   mutate(country = "United States") %>% 
-  select(country)
+  select(id:education, country)
 ```
 
 
-
-
-## 2. Create a **new variable based on other variables**
+Create a **new variable based on other variables**
 
 ```{r}
 nhanes %>%
@@ -129,12 +132,7 @@ nhanes %>%
   select(contains("height"))
 ```
 
-
-
-
-
-
-## 3. Change an **existing variable**
+Change an **existing variable**
 
 ```{r}
 nhanes %>%
@@ -144,10 +142,52 @@ nhanes %>%
 
 
 
-# `filter`
+# A Brief Interlude
+
+## Comparisons
+
+```{r echo = FALSE}
+
+tibble::tribble(
+  ~Operator, ~Description, ~Usage,
+  "<", "less than", "x < y",
+  "<=", "less than or equal to", "x <= y",
+  ">", "greater than", "x > y",
+  ">=", "greater than or equal to", "x >= y",
+  "==", "exactly equal to", "x == y",
+  "!=", "not equal to", "x != y",
+  "%in%", "group membership", "x %in% y",
+  "is.na", "is missing", "is.na(x)",
+  "!is.na", "is not missing", "!is.na(x)"
+)
+```
 
 
-## `filter`
+## Logical operators
+
+With logical operators, we can create complex filters (e.g. keep only those who say their health is "good", "very good", or "excellent").
+
+```{r echo = FALSE}
+
+tibble::tribble(
+  ~Operator, ~Description, ~Usage,
+  "&", "and", "x & y",
+  "|", "or", "x | y",
+  # "xor", "exactly x or y", "xor(x, y)",
+  "!", "not", "!x"
+)
+
+```
+
+
+# filter
+
+![](slides/images/filter.png)
+
+We use `filter` to choose a subset of cases.
+
+We use `==` to select all cases that meet the criteria.
+
 
 ```{r}
 nhanes %>% 
@@ -155,12 +195,7 @@ nhanes %>%
   select(gender)
 ```
 
-
-
-
-
-
-## `filter`
+We use `!=` to select all cases that don't meet the criteria.
 
 ```{r}
 nhanes %>% 
@@ -170,7 +205,7 @@ nhanes %>%
 
 
 
-## `filter`
+We can combine comparisons and logical operators.
 
 ```{r}
 nhanes %>% 
@@ -179,9 +214,7 @@ nhanes %>%
 ```
 
 
-
-
-## `filter`
+We can use `%in%` to collapse multiple comparisons into one.
 
 ```{r}
 nhanes %>% 
@@ -189,12 +222,7 @@ nhanes %>%
   select(health_gen)
 ```
 
-
-
-
-## `filter`
-
-You can chain together multiple `filter` functions. Doing it this way, we don't have create complex logic in one line.
+We can chain together multiple `filter` functions. Doing it this way, we don't have create complex logic in one line.
 
 ```{r}
 nhanes %>% 
@@ -203,11 +231,14 @@ nhanes %>%
   select(gender, health_gen)
 ```
 
+```{r}
+nhanes %>% 
+  filter(gender == "male" & (health_gen == "Good" | health_gen == "VGood" | health_gen == "Excellent")) %>%
+  select(gender, health_gen)
+```
 
 
-
-
-## `filter`
+We can use Use `<`, `>`, `<=`, and `=>` for numeric data.
 
 ```{r}
 nhanes %>% 
@@ -215,11 +246,7 @@ nhanes %>%
 ```
 
 
-
-
-## `filter`
-
-You can drop `NAs` with `!is.na()` 
+We can drop `NAs` with `!is.na()` 
 
 ```{r}
 nhanes %>% 
@@ -228,11 +255,6 @@ nhanes %>%
   select(age, marital_status)
 ```
 
-
-
-
-
-## `filter`
 
 You can also drop `NAs` with `drop_na()`
 
@@ -245,7 +267,29 @@ nhanes %>%
 
 
 
-# `summarize`
+# summarize
+
+![](slides/images/summarize.png)
+
+
+With `summarize`, we can go from a complete dataset down to a summary.
+
+We use these functions with `summarize`.
+
+```{r echo = FALSE}
+tibble::tribble(
+  ~Description, ~Usage,
+  "number", "n()",
+  "sum", "sum(x)",
+  "minimum", "min(x)",
+  "maximum", "max(x)",
+  "mean", "mean(x)",
+  "median", "mean(x)",
+  "standard deviation", "sd(x)",
+  "variance", "var(x)",
+  "rank", "rank(x)"
+)
+```
 
 This doesn't work! Notice what the result is.
 
@@ -254,13 +298,7 @@ nhanes %>%
   summarize(mean_active_days = mean(phys_active_days))
 ```
 
-
-
-
-
-## `summarize`
-
-Add na.rm = TRUE to make this work.
+We need to add `na.rm = TRUE` to tell R to drop `NA` values.
 
 
 ```{r}
@@ -270,12 +308,7 @@ nhanes %>%
 ```
 
 
-
-
-## `summarize`
-
-
-You can have multiple arguments in each usage of `summarize`.
+We can have multiple arguments in each usage of `summarize`.
 
 ```{r}
 nhanes %>% 
@@ -287,7 +320,12 @@ nhanes %>%
 
 
 
-# `group_by`
+# group_by
+
+![](slides/images/group-by.png)
+
+
+`summarize` becomes truly powerful when paired with `group_by`, which enables us to perform calculations on each group. 
 
 
 ```{r}
@@ -297,15 +335,7 @@ nhanes %>%
                                     na.rm = TRUE)) 
 ```
 
-
-
-
-
-
-
-## `group_by` example
-
-`group_by` works for multiple groups.
+We can use `group_by` with multiple groups.
 
 ```{r}
 nhanes %>% 
@@ -317,9 +347,9 @@ nhanes %>%
 
 
 
-## `count`
+## count
 
-If you just want to count the number of things per group, you can use `count`.
+If we just want to count the number of things per group, we can use `count`.
 
 
 ```{r}
@@ -329,10 +359,7 @@ nhanes %>%
 
 
 
-
-## `count`
-
-You can also count by multiple groups.
+We can also count by multiple groups.
 
 ```{r}
 nhanes %>% 
@@ -343,13 +370,25 @@ nhanes %>%
 
 
 
-# `arrange`
+# arrange
 
+![](slides/images/arrange.png)
 
+With `arrange`, we can reorder rows in a data frame based on the values of one or more variables. R arranges in ascending order by default.
 
-## `arrange` example
+```{r}
+nhanes %>% 
+  arrange(age)
+```
 
-R arranges in ascending order by default
+We can also arrange in descending order using `desc()`.
+
+```{r}
+nhanes %>% 
+  arrange(desc(age))
+```
+
+We often use `arrange` at the end of chains to display things in order.
 
 ```{r}
 nhanes %>% 
@@ -360,25 +399,29 @@ nhanes %>%
 ```
 
 
+# Create new data frames
 
-## `arrange` example
-
-You can also arrange in descending order
-
+Sometimes you want to save the results of your work to a new data frame. 
 
 ```{r}
-nhanes %>% 
-  group_by(age_decade, gender) %>%
-  summarize(mean_active_days = mean(phys_active_days,
+female_height_inches_by_age <- nhanes %>% 
+  filter(gender == "female") %>% 
+  mutate(height_inches = height / 2.54) %>% 
+  group_by(age_decade) %>% 
+  summarize(height_inches = mean(height_inches,
                                     na.rm = TRUE)) %>% 
-  arrange(desc(mean_active_days)) 
+  drop_na()
+```
+
+```{r}
+female_height_inches_by_age
 ```
 
 
 
 # Crosstabs
 
-Sometimes you want your results in a crosstab. We'll use the `tabyl` function in `janitor` package to make crosstabs automatically.
+Sometimes you want your results in a crosstab. We can use the `tabyl` function in `janitor` package to make crosstabs automatically.
 
 
 ```{r}
@@ -387,28 +430,16 @@ nhanes %>%
 ```
 
 
-
-## `adorn_` functions
-
-`janitor` has a set of functions that all start with `adorn_` that add a number of things to our crosstabs. You call them after `tabyl`.
-
-
-## Add totals
+`janitor` has a set of functions that all start with `adorn_` that add a number of things to our crosstabs. We call them after `tabyl`. For example, `adorn_totals`.
 
 ```{r}
-
 nhanes %>% 
   tabyl(gender, age_decade) %>% 
   adorn_totals(c("row", "col"))
-  
-
 ```
 
 
-
-
-
-## Add percentages
+We can add `adorn_percentages` to add percentages.
 
 
 ```{r}
@@ -420,7 +451,7 @@ nhanes %>%
 
 
 
-## Format percentages
+We can then format these percentages using `adorn_pct_formatting`.
 
 ```{r}
 nhanes %>% 
@@ -432,9 +463,7 @@ nhanes %>%
 
 
 
-
-
-## Include n alongside percentages
+If we want to include the n alongside percentages, we can use `adorn_ns`.
 
 ```{r}
 nhanes %>% 
@@ -447,8 +476,7 @@ nhanes %>%
 
 
 
-
-## Add title
+We can add titles to our crosstabs using `adorn_title`.
 
 ```{r}
 nhanes %>% 
@@ -463,11 +491,7 @@ nhanes %>%
 
 
 
-
-
-## Three (or more) way crosstabs
-
-You can also do three (or more) way crosstabs automatically by adding more variables to the `tabyl` function.
+We can also do three (or more) way crosstabs automatically by adding more variables to the `tabyl` function.
 
 ```{r}
 nhanes %>% 
@@ -478,21 +502,5 @@ nhanes %>%
   adorn_ns() %>% 
   adorn_title() 
 
-```
-
-# Create new data frames
-
-Sometimes you want to save the results of your work to a new data frame. 
-
-```{r}
-phys_activity_by_age <- nhanes %>% 
-  group_by(age_decade) %>% #<<
-  summarize(mean_active_days = mean(phys_active_days,
-                                    na.rm = TRUE)) %>% 
-  drop_na()
-```
-
-```{r}
-phys_activity_by_age
 ```
 

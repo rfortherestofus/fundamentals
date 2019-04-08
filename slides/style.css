@@ -7,6 +7,7 @@ body {
   
 }
 
+
 .remark-slide-content {
   font-size: 25px;
   line-height: 1.25;
@@ -165,4 +166,32 @@ div.dk-footer a {
   color: #fff;
   background-color: ;
   padding: 1px 50px;
+}
+
+
+/* Non-slides */
+
+.toc-content h1, h2, h3 {
+  font-weight: 700;
+}
+
+.section.level1, .section.level2, .section.level3 {
+  margin-top: 50px;
+}
+
+/*
+.section.level1:before {
+  content: url(images/rru-logo-blue.png);
+  justify-content: center;
+  display: flex;
+}
+
+.section.level1:before:nth-of-type(1) {
+  content: "";
+}
+*/
+
+.toc-content p {
+  font-size: 18px;
+  margin: 18px 0;
 }

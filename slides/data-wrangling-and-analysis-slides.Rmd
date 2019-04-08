@@ -21,10 +21,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval = F, 
                       warning = F,
-                      message = F,
-                      rows.print = 5,
-                      max.print = 100,
-                      pages.print = 5)
+                      message = F)
 
 library(tidyverse)
 library(skimr)
