@@ -1,0 +1,409 @@
+---
+title: "Fundamentals of Data Wrangling and Analysis Exercises"
+author: "R for the Rest of Us"
+output: 
+    html_document:
+        css: slides/style.css
+        toc: true
+        toc_depth: 1
+        toc_float: true
+        df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The exercises are part of the Fundamentals of R course. For more, see the [R for the Rest of Us website](https://rfortherestofus.com/courses/fundamentals/).
+
+# Load Packages
+
+Load the `tidyverse` and `janitor` packages.
+
+```{r}
+# YOUR CODE HERE
+```
+
+# Import NHANES Data
+
+Import the NHANES data to a data frame called `nhanes`. Then, use the `clean_names` function to create clean names for all of your variables.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+# select
+
+![](slides/images/select.png)
+
+With `select` we can select variables from the larger data frame. 
+
+Use `select` to show just the `marital_status` variable.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+We can also use `select` for multiple variables. 
+
+Use `select` to show `marital_status` and `education`.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+We can use `one_of()` to do the same thing. 
+
+Use `select` to show `marital_status` and `education`, but use `one_of()`.
+
+```{r}
+# YOUR CODE HERE
+```
+
+Used within `select`, the `contains` function selects variable with certain text in the variable name. 
+
+Use the `contains` function to select variables that ask how many days in the last 30 days the respondent had bad physical and mental health (you should be able to figure out which variables these are from the names). 
+
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+We can `select` a range of columns using the var1:var2 pattern. `select` all the variables from `health_gen` to the end.
+
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+We can drop variables using the -var format. Drop the `education` variable.
+
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+We can drop a set of variables using the -(var1:var2) format. Drop the variables from `health_gen` to the end.
+
+
+```{r}
+# YOUR CODE HERE
+```
+
+# mutate
+
+![](slides/images/mutate.png)
+
+We use `mutate` we make new variables or change existing ones. 
+
+Create a **new variable with a specific value**
+
+Create a new variable called `completed_survey` and make all responses to it "Yes".
+
+```{r}
+# YOUR CODE HERE
+```
+
+Copy your code from above and then add a line where you select only the `completed_survey` variable. Don't forget the pipe (%>%)!
+
+```{r}
+# YOUR CODE HERE
+```
+
+Create a **new variable based on other variables**
+
+Create a new variable called `pct_days_phys_health_bad` and calculate it as the percentage of self-reported days of bad physical health in the last 30 days. Remember that the `days_phys_hlth_bad` variable is a measure of the **number** of self-reported days of bad physical health in the last 30 days. Then, use `select` to show the `days_phys_hlth_bad` and `pct_days_phys_health_bad` variables.
+
+```{r}
+# YOUR CODE HERE
+```
+
+Change an **existing variable**
+
+Round the `height` variable to a whole number. Then, use `select` to show only the `height` variable.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+
+# filter
+
+![](slides/images/filter.png)
+
+We use `filter` to choose a subset of cases.
+
+Use `filter` to keep only respondents who are divorced. Then, use `select` to show only the `marital_status` variable.
+
+```{r}
+# YOUR CODE HERE
+```
+
+Use `filter` to keep only respondents who are **not** divorced. Then, use `select` to show only the `marital_status` variable.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+Use `filter` to keep only respondents who are divorced or separated. Then, use `select` to show only the `marital_status` variable.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+Use `%in%` within the `filter` function to keep only those who are divorced, separated, or widowed. Then, use `select` to show only the `marital_status` variable.
+
+```{r}
+# YOUR CODE HERE
+```
+
+We can chain together multiple `filter` functions. Doing it this way, we don't have create complex logic in one line.
+
+Create a chain that keeps only those are college grads (line #1). Then, `filter` to keep only those who are divorced, separated, or widowed. Finally, use `select` to show only the `education` and `marital_status` variables.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+We can use Use `<`, `>`, `<=`, and `=>` for numeric data. 
+
+Use `filter` to only show those reported at least 5 days of physical activity in the last 30 days (this is the `phys_active_days` variable). Then, use `select` to keep only the `phys_active_days` and the `days_phys_hlth_bad` variables.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+We can drop `NAs` with `!is.na` 
+
+Do the same thing as above, but drop responses that don't have a response for `days_phys_hlth_bad`. Then, use `select` to keep only the `phys_active_days` and the `days_phys_hlth_bad` variables.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+You can also drop `NAs` with `drop_na`
+
+Do the same thing as above, but use `drop_na` instead of `!is.na`. Make sure you get the same result!
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+# summarize
+
+![](slides/images/summarize.png)
+
+
+With `summarize`, we can go from a complete dataset down to a summary.
+
+Get the mean hours of sleep per night that respondents say they get.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+We can have multiple arguments in each usage of `summarize`.
+
+In addition to calculating the mean hours of sleep per night, calculate the number of responses.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+
+# group_by
+
+![](slides/images/group-by.png)
+
+
+`summarize` becomes truly powerful when paired with `group_by`, which enables us to perform calculations on each group. 
+
+Calculate the mean hours of sleep for females and males using `group_by` and `summarize`.
+
+```{r}
+# YOUR CODE HERE
+````
+
+We can use `group_by` with multiple groups.
+
+Use `group_by` for `gender` and `work` (whether or not respondents are working) before calculating mean hours of sleep.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+## count
+
+If we just want to count the number of things per group, we can use `count`.
+
+Use `count` to show the number of responses by highest level of education completed (`education`).
+
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+We can also count by multiple groups.
+
+Use `count` to show the number of responses for `education` and `phys_active`.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+# arrange
+
+![](slides/images/arrange.png)
+
+With `arrange`, we can reorder rows in a data frame based on the values of one or more variables. R arranges in ascending order by default.
+
+Use `count` to show the number of responses by education level. Then, use `arrange` to order by the number of responses.
+
+```{r}
+# YOUR CODE HERE
+```
+
+We can also arrange in descending order using `desc`.
+
+Do the same thing as above, but put it in descending order using `desc`.
+
+```{r}
+# YOUR CODE HERE
+```
+
+We often use `arrange` at the end of chains to display things in order.
+
+Create a chain that does the following:
+
+1. Uses `filter` to only include those age 30 or older
+2. Uses `group_by` to create a male and female group
+3. Uses `summarize` to calculate a new variable called `mean_bad_mental_health_days` for males and females
+4. Uses `mutate` to round `mean_bad_mental_health_days` to one decimal places
+5. Drop any NAs in the `education` column
+5. Uses `arrange` to put `mean_bad_mental_health_days` in ascending order
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+# Create new data frames
+
+Sometimes you want to save the results of your work to a new data frame. 
+
+Copy the code above and save it to a new data frame called `mental_health_over_30`.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+# Crosstabs
+
+Sometimes you want your results in a crosstab. We can use the `tabyl` function in `janitor` package to make crosstabs automatically.
+
+Create a crosstab of `gender` and `health_gen`. 
+
+
+```{r}
+# YOUR CODE HERE
+```
+
+Add a `drop_na` before your line with `tabyl` to get rid of all NAs.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+`janitor` has a set of functions that all start with `adorn_` that add a number of things to our crosstabs. We call them after `tabyl`. For example, `adorn_totals`.
+
+Use the code above and then add totals using `adorn_totals` in the rows and columns.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+We can add `adorn_percentages` to add percentages.
+
+Use the code above and then add percentages using `adorn_percentages`.
+
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+We can then format these percentages using `adorn_pct_formatting`.
+
+Use the code above and then format the percentages using `adorn_pct_formatting`. Add arguments so that the percentages are rounded to 1 digit. Note that R uses the "half to even" rounding method by default so if you want to round, say, 14.5 to 15 you must use the `rounding` argument (type ?adorn_pct_formatting in the console to learn more). 
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+If we want to include the n alongside percentages, we can use `adorn_ns`.
+
+Use the code above and then add a line with `adorn_ns` to include the n.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+We can add titles to our crosstabs using `adorn_title`.
+
+Use the code above and then add a title using `adorn_title`. Use the `placement` argument and see what you get.
+
+```{r}
+# YOUR CODE HERE
+```
+
+
+
+
+We can also do three (or more) way crosstabs automatically by adding more variables to the `tabyl` function.
+
+Use the code above, but add a third variable (`age_decade`) to the line with `drop_na` and the line with `tabyl`. You should get a series of crosstab.s
+
+```{r}
+# YOUR CODE HERE
+```
+

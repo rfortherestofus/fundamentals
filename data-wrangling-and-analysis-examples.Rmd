@@ -24,9 +24,50 @@ Let's load the packages we need. These include `tidyverse` (especially the `dply
 ```{r}
 library(tidyverse)
 library(janitor)
+library(skimr)
 ```
 
-# Import Data
+# clean_names
+
+```{r}
+bad_names <- read_csv("data/badnames.csv")
+
+bad_names
+
+```
+
+With the `bad_names` data frame, we have to use back tick (`) before and after variable names with spaces in them. Also, RStudio doesn't autocomplete the variable names, which is a pain!
+
+```{r}
+
+bad_names %>% 
+  skim(`Age Decade`)
+
+```
+
+We can use `clean_names` as follows:
+
+```{r}
+
+good_names <- bad_names %>% 
+  clean_names()
+
+
+good_names
+
+```
+
+Variable names are much easier to type now! And RStudio autocompletes them, which is super handy.
+
+```{r}
+
+good_names %>% 
+  skim(age_decade)
+
+```
+
+
+# Import NHANES Data
 
 Let's import our data using `read_csv`. Note that the NHANES data is in the data directory so we need to include that.
 
@@ -111,7 +152,7 @@ nhanes %>%
 
 ![](slides/images/mutate.png)
 
-We `mutate` we make new variables or change existing ones. 
+We use `mutate` we make new variables or change existing ones. 
 
 We can use `mutate` in three ways:
 
@@ -246,7 +287,7 @@ nhanes %>%
 ```
 
 
-We can drop `NAs` with `!is.na()` 
+We can drop `NAs` with `!is.na` 
 
 ```{r}
 nhanes %>% 
@@ -256,7 +297,7 @@ nhanes %>%
 ```
 
 
-You can also drop `NAs` with `drop_na()`
+You can also drop `NAs` with `drop_na`
 
 ```{r}
 nhanes %>% 
@@ -476,7 +517,7 @@ nhanes %>%
 
 
 
-We can add titles to our crosstabs using `adorn_title`.
+We can add titles to our crosstabs using `adorn_title`. 
 
 ```{r}
 nhanes %>% 
@@ -500,7 +541,7 @@ nhanes %>%
   adorn_percentages() %>% 
   adorn_pct_formatting() %>% 
   adorn_ns() %>% 
-  adorn_title() 
+  adorn_title(placement = "combined")
 
 ```
 
