@@ -104,20 +104,35 @@ nhanes %>%
 ```
 
 
-We can use `one_of()` to do the same thing:
-
-```{r}
-nhanes %>%
-  select(one_of(c("height", "weight")))
-```
-
 Used within `select`, the `contains` function selects variable with certain text in the variable name:
 
 
 ```{r}
+
 nhanes %>%
   select(contains("age"))
+
 ```
+
+```{r}
+nhanes %>%
+  select(contains("phys"))
+```
+
+
+See also `starts_with` and `ends_with`.
+
+```{r}
+nhanes %>% 
+  select(starts_with("days"))
+```
+
+```{r}
+nhanes %>% 
+  select(ends_with("days"))
+```
+
+
 
 
 We can `select` a range of columns using the var1:var2 pattern
@@ -161,7 +176,7 @@ Create a **new variable with a specific value**
 ```{r}
 nhanes %>%
   mutate(country = "United States") %>% 
-  select(id:education, country)
+  select(country)
 ```
 
 
@@ -225,9 +240,9 @@ tibble::tribble(
 
 ![](slides/images/filter.png)
 
-We use `filter` to choose a subset of cases.
+We use `filter` to choose a subset of observations.
 
-We use `==` to select all cases that meet the criteria.
+We use `==` to select all observations that meet the criteria.
 
 
 ```{r}
@@ -236,7 +251,7 @@ nhanes %>%
   select(gender)
 ```
 
-We use `!=` to select all cases that don't meet the criteria.
+We use `!=` to select all observations that don't meet the criteria.
 
 ```{r}
 nhanes %>% 
@@ -250,7 +265,7 @@ We can combine comparisons and logical operators.
 
 ```{r}
 nhanes %>% 
-  filter(health_gen != "Good" | health_gen != "VGood" | health_gen != "Excellent") %>%
+  filter(health_gen == "Good" | health_gen == "Vgood" | health_gen == "Excellent") %>%
   select(health_gen)
 ```
 
@@ -259,7 +274,7 @@ We can use `%in%` to collapse multiple comparisons into one.
 
 ```{r}
 nhanes %>% 
-  filter(health_gen %in% c("Good", "VGood", "Excellent")) %>%
+  filter(health_gen %in% c("Good", "Vgood", "Excellent")) %>%
   select(health_gen)
 ```
 
@@ -267,23 +282,26 @@ We can chain together multiple `filter` functions. Doing it this way, we don't h
 
 ```{r}
 nhanes %>% 
+  filter(gender == "male" & (health_gen == "Good" | health_gen == "Vgood" | health_gen == "Excellent")) %>%
+  select(gender, health_gen)
+```
+
+```{r}
+nhanes %>% 
   filter(gender == "male") %>%
-  filter(health_gen %in% c("Good", "VGood", "Excellent")) %>%
-  select(gender, health_gen)
-```
-
-```{r}
-nhanes %>% 
-  filter(gender == "male" & (health_gen == "Good" | health_gen == "VGood" | health_gen == "Excellent")) %>%
+  filter(health_gen %in% c("Good", "Vgood", "Excellent")) %>%
   select(gender, health_gen)
 ```
 
 
-We can use Use `<`, `>`, `<=`, and `=>` for numeric data.
+
+
+We can use `<`, `>`, `<=`, and `=>` for numeric data.
 
 ```{r}
 nhanes %>% 
-  filter(age > 50)
+  filter(age > 50) %>% 
+  select(age)
 ```
 
 
@@ -297,7 +315,7 @@ nhanes %>%
 ```
 
 
-You can also drop `NAs` with `drop_na`
+We can also drop `NAs` with `drop_na`
 
 ```{r}
 nhanes %>% 
@@ -325,19 +343,21 @@ tibble::tribble(
   "minimum", "min(x)",
   "maximum", "max(x)",
   "mean", "mean(x)",
-  "median", "mean(x)",
+  "median", "median(x)",
   "standard deviation", "sd(x)",
   "variance", "var(x)",
   "rank", "rank(x)"
 )
 ```
 
-This doesn't work! Notice what the result is.
+
 
 ```{r}
 nhanes %>% 
   summarize(mean_active_days = mean(phys_active_days))
 ```
+
+This doesn't work! Notice what the result is. 
 
 We need to add `na.rm = TRUE` to tell R to drop `NA` values.
 
@@ -371,7 +391,7 @@ nhanes %>%
 
 ```{r}
 nhanes %>% 
-  group_by(age_decade) %>%
+  group_by(survey_yr) %>%
   summarize(mean_active_days = mean(phys_active_days,
                                     na.rm = TRUE)) 
 ```
@@ -380,9 +400,10 @@ We can use `group_by` with multiple groups.
 
 ```{r}
 nhanes %>% 
-  group_by(age_decade, gender) %>%
+  group_by(survey_yr, gender) %>%
   summarize(mean_active_days = mean(phys_active_days,
                                     na.rm = TRUE)) 
+
 ```
 
 
@@ -404,7 +425,8 @@ We can also count by multiple groups.
 
 ```{r}
 nhanes %>% 
-  count(age_decade, gender)
+  count(age_decade, gender) %>% 
+  drop_na(age_decade)
 ```
 
 
@@ -433,16 +455,31 @@ We often use `arrange` at the end of chains to display things in order.
 
 ```{r}
 nhanes %>% 
-  group_by(age_decade, gender) %>%
+  group_by(gender, age_decade) %>%
   summarize(mean_active_days = mean(phys_active_days,
                                     na.rm = TRUE)) %>% 
-  arrange(mean_active_days) 
+  drop_na(age_decade) %>% 
+  arrange(desc(mean_active_days))
 ```
 
 
 # Create new data frames
 
 Sometimes you want to save the results of your work to a new data frame. 
+
+This just displays the output.
+
+```{r}
+nhanes %>% 
+  filter(gender == "female") %>% 
+  mutate(height_inches = height / 2.54) %>% 
+  group_by(age_decade) %>% 
+  summarize(height_inches = mean(height_inches,
+                                    na.rm = TRUE)) %>% 
+  drop_na(age_decade)
+```
+
+This assigns that output to a new data frame.
 
 ```{r}
 female_height_inches_by_age <- nhanes %>% 
@@ -451,13 +488,13 @@ female_height_inches_by_age <- nhanes %>%
   group_by(age_decade) %>% 
   summarize(height_inches = mean(height_inches,
                                     na.rm = TRUE)) %>% 
-  drop_na()
+  drop_na(age_decade)
 ```
+
 
 ```{r}
 female_height_inches_by_age
 ```
-
 
 
 # Crosstabs

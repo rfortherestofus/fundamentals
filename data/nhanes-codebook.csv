@@ -1,0 +1,39 @@
+variable_name,variable_name_clean,description
+ID,id,Participant identifier.
+SurveyYr,survey_yr,Which survey the participant participated in.
+Gender,gender,Gender (sex) of study participant coded as male or female
+Age,age,"Age in years at screening of study participant. Note: Subjects 80 years or older were recorded
+as 80."
+AgeDecade,age_decade,"Categorical variable derived from age with levels 0-9, 10-19, . . . 70+"
+Race1,race1,"Reported race of study participant: Mexican, Hispanic, White, Black, or Other"
+Education,education,"Educational level of study participant Reported for participants aged 20 years or older.
+One of 8thGrade, 9-11thGrade, HighSchool, SomeCollege, or CollegeGrad."
+MaritalStatus,marital_status,"Marital status of study participant. Reported for participants aged 20 years or older.
+One of Married, Widowed, Divorced, Separated, NeverMarried, or LivePartner (living
+with partner)."
+HHIncome,hh_income,"Total annual gross income for the household in US dollars. One of 0 - 4999,
+5000 - 9,999, 10000 - 14999, 15000 - 19999, 20000 - 24,999, 25000 - 34999,
+    35000 - 44999, 45000 - 54999, 55000 - 64999, 65000 - 74999, 75000 - 99999, or
+    100000 or More."
+HomeOwn,home_own,"One of Home, Rent, or Other indicating whether the home of study participant or someone in their family is owned, rented or occupied by some other arrangement."
+Work,work,"Self-reported work status for participants aged 16 years or older. One of Working, NotWorking or Looking."
+Weight,weight,Weight in kg
+Height,height,Standing height in cm. Reported for participants aged 2 years or older
+BMI,bmi,Body mass index (weight/height2 in kg/m2). Reported for participants aged 2 years or older
+HealthGen,health_gen,"Self-reported rating of participant’s health in general Reported for participants aged 12
+years or older. One of Excellent, Vgood, Good, Fair, or Poor."
+DaysPhysHlthBad,days_phys_hlth_bad,"Self-reported number of days participant’s physical health was not good out of
+the past 30 days. Reported for participants aged 12 years or older."
+DaysMentHlthBad,days_ment_hlth_bad,"Self-reported number of days participant’s mental health was not good out of
+the past 30 days. Reported for participants aged 12 years or older"
+SleepHrsNight,sleep_hrs_night,"Self-reported number of hours study participant usually gets at night on weekdays
+or workdays. Reported for participants aged 16 years and older"
+PhysActive,phys_active,"Participant does moderate or vigorous-intensity sports, fitness or recreational activities
+(Yes or No). Reported for participants 12 years or older."
+PhysActiveDays,phys_active_days,Number of days in a typical week that participant does moderate or vigorousintensity activity. Reported for participants 12 years or older.
+TVHrsDay,tv_hrs_day,"Number of hours per day on average participant watched TV over the past 30 days. Reported for participants 2 years or older. One of 0_to_1hr, 1_hr, 2_hr, 3_hr, 4_hr, More_4_hr.
+Not available 2009-2010."
+SmokeNow,smoke_now,"Study participant currently smokes cigarettes regularly. Reported for participants aged
+20 years or older as Yes or No, provided they answered Yes to having somked 100 or more
+cigarettes in their life time. All subjects who have not smoked 100 or more cigarettes are listed
+as NA here."

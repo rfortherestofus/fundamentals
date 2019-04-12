@@ -44,7 +44,7 @@ With `select` we can select variables from the larger data frame.
 Use `select` to show just the `marital_status` variable.
 
 ```{r}
-# YOUR CODE HERE
+
 ```
 
 
@@ -58,18 +58,19 @@ Use `select` to show `marital_status` and `education`.
 ```
 
 
-We can use `one_of()` to do the same thing. 
+Used within `select`, the `contains` function selects variable with certain text in the variable name. 
 
-Use `select` to show `marital_status` and `education`, but use `one_of()`.
+Use the `contains` function to select variables that ask how many days in the last 30 days the respondent had bad physical and mental health (you should be able to figure out which variables these are from the names). 
+
 
 ```{r}
 # YOUR CODE HERE
 ```
 
-Used within `select`, the `contains` function selects variable with certain text in the variable name. 
 
-Use the `contains` function to select variables that ask how many days in the last 30 days the respondent had bad physical and mental health (you should be able to figure out which variables these are from the names). 
+Used within `select`, the `starts_with` function selects variable with certain text in the variable name. 
 
+Use the `starts_with` function to select variables that start with the letter h.
 
 ```{r}
 # YOUR CODE HERE
@@ -309,9 +310,8 @@ Create a chain that does the following:
 1. Uses `filter` to only include those age 30 or older
 2. Uses `group_by` to create a male and female group
 3. Uses `summarize` to calculate a new variable called `mean_bad_mental_health_days` for males and females
-4. Uses `mutate` to round `mean_bad_mental_health_days` to one decimal places
-5. Drop any NAs in the `education` column
-5. Uses `arrange` to put `mean_bad_mental_health_days` in ascending order
+4. Uses `mutate` to round `mean_bad_mental_health_days` to one decimal place
+5. Uses `arrange` to put `mean_bad_mental_health_days` in descending order
 
 ```{r}
 # YOUR CODE HERE
