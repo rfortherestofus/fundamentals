@@ -2,9 +2,6 @@
 title: "Fundamentals of Data Wrangling and Analysis in R"
 output:
   xaringan::moon_reader:
-    # df_print: paged
-    # self-contained: true
-    # chakra: libs/remark-latest.min.js
     css: ["style.css", "default"]
     lib_dir: libs
     nature:
@@ -12,7 +9,6 @@ output:
       highlightLines: true
       countIncrementalSlides: false
       ratio: 16:9
-
 ---
 
 

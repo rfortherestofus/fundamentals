@@ -1,0 +1,29 @@
+---
+title: "Fundamentals of Data Visualization in R"
+output:
+  xaringan::moon_reader:
+    css: ["style.css", "default"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: 16:9
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = F, 
+                      warning = F,
+                      message = F)
+
+library(tidyverse)
+library(skimr)
+library(janitor)
+library(here)
+library(kableExtra)
+
+
+```
