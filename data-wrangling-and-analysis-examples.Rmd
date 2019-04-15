@@ -499,12 +499,18 @@ female_height_inches_by_age
 
 # Crosstabs
 
-Sometimes you want your results in a crosstab. We can use the `tabyl` function in `janitor` package to make crosstabs automatically.
-
+The `tabyl` function in the `janitor` package is mostly used for crosstabs, but you can use it to do frequencies.
 
 ```{r}
 nhanes %>% 
-  tabyl(gender, age_decade) 
+  tabyl(age_decade)
+```
+
+To do a crosstab, you just add another variable.
+
+```{r}
+nhanes %>% 
+  tabyl(age_decade, gender) 
 ```
 
 
@@ -512,8 +518,8 @@ nhanes %>%
 
 ```{r}
 nhanes %>% 
-  tabyl(gender, age_decade) %>% 
-  adorn_totals(c("row", "col"))
+  tabyl(age_decade, gender) %>% 
+  adorn_totals(where = c("row", "col"))
 ```
 
 
@@ -522,8 +528,8 @@ We can add `adorn_percentages` to add percentages.
 
 ```{r}
 nhanes %>% 
-  tabyl(gender, age_decade) %>% 
-  adorn_totals(c("row", "col")) %>% 
+  tabyl(age_decade, gender) %>% 
+  adorn_totals(where = c("row", "col")) %>% 
   adorn_percentages()
 ```
 
@@ -533,10 +539,11 @@ We can then format these percentages using `adorn_pct_formatting`.
 
 ```{r}
 nhanes %>% 
-  tabyl(gender, age_decade) %>% 
-  adorn_totals(c("row", "col")) %>% 
+  tabyl(age_decade, gender) %>% 
+  adorn_totals(where = c("row", "col")) %>% 
   adorn_percentages() %>% 
-  adorn_pct_formatting() 
+  adorn_pct_formatting(digits = 0,
+                       rounding = "half up") 
 ```
 
 
@@ -545,10 +552,11 @@ If we want to include the n alongside percentages, we can use `adorn_ns`.
 
 ```{r}
 nhanes %>% 
-  tabyl(gender, age_decade) %>% 
+  tabyl(age_decade, gender) %>% 
   adorn_totals(c("row", "col")) %>% 
   adorn_percentages() %>% 
-  adorn_pct_formatting() %>% 
+  adorn_pct_formatting(digits = 0,
+                       rounding = "half up") %>% 
   adorn_ns()
 ```
 
@@ -558,12 +566,12 @@ We can add titles to our crosstabs using `adorn_title`.
 
 ```{r}
 nhanes %>% 
-  tabyl(gender, age_decade) %>% 
+  tabyl(age_decade, gender) %>% 
   adorn_totals(c("row", "col")) %>% 
   adorn_percentages() %>% 
   adorn_pct_formatting() %>% 
   adorn_ns() %>% 
-  adorn_title()
+  adorn_title(placement = "combined")
 ```
 
 
@@ -573,7 +581,7 @@ We can also do three (or more) way crosstabs automatically by adding more variab
 
 ```{r}
 nhanes %>% 
-  tabyl(gender, age_decade, education) %>%
+  tabyl(age_decade, gender, education) %>% 
   adorn_totals(c("row", "col")) %>% 
   adorn_percentages() %>% 
   adorn_pct_formatting() %>% 

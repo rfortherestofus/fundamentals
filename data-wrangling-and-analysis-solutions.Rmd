@@ -373,7 +373,7 @@ nhanes %>%
 ```
 
 
-# Create new data frames
+# Create a new data frame
 
 Sometimes you want to save the results of your work to a new data frame. 
 
@@ -419,7 +419,7 @@ Use the code above and then add totals using `adorn_totals` in the rows and colu
 nhanes %>% 
   drop_na(gender, health_gen) %>% 
   tabyl(gender, health_gen) %>% 
-  adorn_totals(c("row", "col"))
+  adorn_totals(where = c("row", "col"))
 ```
 
 
@@ -432,7 +432,7 @@ Use the code above and then add percentages using `adorn_percentages`.
 nhanes %>% 
   drop_na(gender, health_gen) %>% 
   tabyl(gender, health_gen) %>% 
-  adorn_totals(c("row", "col")) %>% 
+  adorn_totals(where = c("row", "col")) %>% 
   adorn_percentages()
 ```
 
@@ -446,9 +446,10 @@ Use the code above and then format the percentages using `adorn_pct_formatting`.
 nhanes %>% 
   drop_na(gender, health_gen) %>% 
   tabyl(gender, health_gen) %>% 
-  adorn_totals(c("row", "col")) %>% 
+  adorn_totals(where = c("row", "col")) %>% 
   adorn_percentages() %>% 
-  adorn_pct_formatting(digits = 0, rounding = "half up") 
+  adorn_pct_formatting(digits = 1, 
+                       rounding = "half up") 
 ```
 
 
@@ -463,7 +464,8 @@ nhanes %>%
   tabyl(gender, health_gen) %>% 
   adorn_totals(c("row", "col")) %>% 
   adorn_percentages() %>% 
-  adorn_pct_formatting(digits = 0, rounding = "half up") %>% 
+  adorn_pct_formatting(digits = 1, 
+                       rounding = "half up") %>% 
   adorn_ns()
 ```
 
@@ -479,7 +481,8 @@ nhanes %>%
   tabyl(gender, health_gen) %>% 
   adorn_totals(c("row", "col")) %>% 
   adorn_percentages() %>% 
-  adorn_pct_formatting(digits = 0, rounding = "half up") %>% 
+  adorn_pct_formatting(digits = 0, 
+                       rounding = "half up") %>% 
   adorn_ns() %>% 
   adorn_title(placement = "combined")
 ```
@@ -489,7 +492,7 @@ nhanes %>%
 
 We can also do three (or more) way crosstabs automatically by adding more variables to the `tabyl` function.
 
-Use the code above, but add a third variable (`age_decade`) to the line with `drop_na` and the line with `tabyl`. You should get a series of crosstab.s
+Use the code above, but add a third variable (`age_decade`) to the line with `drop_na` and the line with `tabyl`. You should get a series of crosstabs.
 
 ```{r}
 nhanes %>% 

@@ -318,7 +318,7 @@ Create a chain that does the following:
 ```
 
 
-# Create new data frames
+# Create a new data frame
 
 Sometimes you want to save the results of your work to a new data frame. 
 
@@ -401,7 +401,7 @@ Use the code above and then add a title using `adorn_title`. Use the `placement`
 
 We can also do three (or more) way crosstabs automatically by adding more variables to the `tabyl` function.
 
-Use the code above, but add a third variable (`age_decade`) to the line with `drop_na` and the line with `tabyl`. You should get a series of crosstab.s
+Use the code above, but add a third variable (`age_decade`) to the line with `drop_na` and the line with `tabyl`. You should get a series of crosstabs.
 
 ```{r}
 # YOUR CODE HERE
