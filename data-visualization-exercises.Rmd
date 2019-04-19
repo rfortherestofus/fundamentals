@@ -1,0 +1,240 @@
+---
+title: "Fundamentals of Data Wrangling and Analysis Examples"
+author: "R for the Rest of Us"
+output: 
+    html_document:
+        css: slides/style.css
+        toc: true
+        toc_depth: 1
+        toc_float: true
+        df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The exercises are part of the Fundamentals of R course. For more, see the [R for the Rest of Us website](https://rfortherestofus.com/courses/fundamentals/).
+
+# Load Packages
+
+Let's load the packages we need. These include `tidyverse` (especially the `dplyr` package) and `janitor`. 
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+# Import NHANES Data
+
+Import your data into a data frame called NHANES. Use `clean_names` to make your variable names easy to work with.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+# Scatterplot
+
+Make a scatterplot that shows weight on the x axis and height on the y axis.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+
+# Histogram 
+
+Make a histogram that shows the distribution of the weight variable.
+
+
+```{r}
+# YOUR CODE HERE 
+```
+
+Copy your code from above, but adjust it so that there are 50 bins.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+# Bar Chart
+
+## Bar Chart v1
+
+Use the v1 approach to make a bar chart that shows a count of the number of people who say they smoke. Include NA responses.
+
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+
+## Bar Chart v2
+
+Create a new data frame called `sleep_by_gender` that shows the average amount of sleep per night that males and females report getting. Drop any NA (or NaN) responses from this data frame.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+
+
+Make the same graph as above, but use `geom_col` instead of `geom_bar`.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+
+# `color` and `fill`
+
+Take your graph from above (the one with `geom_col`) and make the inside of each bar a different color.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+Make your scatterplot from before that shows weight on the x axis and height on the y axis again, but make the dots show up in different colors based on the `phys_active` variable.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+# Scales
+
+## color
+
+Take your scatterplot that you just made and add a scale using `scale_color_brewer`. Take a look at the help docs and choose a palette other than the default (hint: look at the `palette` argument). 
+
+```{r}
+# YOUR CODE HERE 
+```
+
+Do nearly the same thing to change the color of the last bar chart you made (the one about sleep and gender). Note that NA values will not show up so use the `na.value` argument to set the NAs to be blue (you can use the text "blue" to do this)
+
+```{r}
+# YOUR CODE HERE 
+```
+
+## x and y axes
+
+Copy the graph you just made and change the y axis so it goes from 0 to 8.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+Copy the last code chunk. Then adjust the breaks on the y axis so that it shows 0 to 8 by 1 (i.e. 0, 1, 2, etc).
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+# Text and Labels
+
+Copy your last code chunk. Then do the following:
+
+1. Add text labels to each bar. 
+1. Use the `round` argument to just show one decimal place in each label.
+1. Use the `vjust` argument to have them show up at the inner edge of the bars.
+1. Make the labels all white.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+
+Do the same thing as above, but use `geom_label` instead of `geom_text`. Also, do the following:
+
+1. Use the `vjust` argument to have them show up at the outer edge of the bars.
+1. Don't show the legend (hint: you'll have to add code in two places to make this happen).
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+# Plot Labels
+
+Use the code chunk from above with `geom_text` (not the last one with `geom_label`). Do the following:
+
+1. Add a title
+1. Add a better y axis label
+1. Remove the x axis label
+1. Remove the legend
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+
+# Themes
+
+Install and load the [`hrbrthemes` package](https://hrbrmstr.github.io/hrbrthemes/index.html). It's a package that provides some great default themes. 
+
+It's not available on CRAN, where we normally install packages from, which means you have to install it slightly differently. You'll use the `devtools` package and then use this to install the `hrbrthemes` package. Use the code below.
+
+```{r}
+# install.packages("devtools")
+# devtools::install_github("hrbrmstr/hrbrthemes")
+library(hrbrthemes)
+```
+
+Then add the `theme_ipsum` to your plot.
+
+```{r}
+# YOUR CODE HERE 
+```
+
+# Facetting (aka Small Multiples)
+
+I've created a data frame called `sleep_by_gender_by_age` for you. Run the code chunk below to load the data frame.
+
+```{r}
+sleep_by_gender_by_age <- nhanes %>% 
+  group_by(gender, age_decade) %>% 
+  summarize(avg_sleep = mean(sleep_hrs_night, na.rm = TRUE)) %>% 
+  drop_na()
+```
+
+Let's take a look at `sleep_by_gender_by_age`.
+
+```{r}
+sleep_by_gender_by_age
+```
+
+Now, see if you can recreate this plot. Much of the code will be the same from your previous plots using the `sleep_by_gender` data frame so just make some small changes.
+
+![](plots/sleep-by-gender-by-age.png)
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+# Save Plots
+
+Save your last plot to a PNG that is 8 inches wide and 5 inches high. Put it in the plots directory and call it "my-sleep-plot.png"
+
+
+```{r}
+# YOUR CODE HERE 
+```
+
+
+
+
