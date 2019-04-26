@@ -39,24 +39,15 @@ nhanes <- read_csv(here("data/nhanes.csv")) %>%
 
 
 
-# First, a tip
+# An Important Workflow Tip
 
 ![](images/dont-load-data.png)
 
 ---
 
-
-
+class: inverse, center, middle, dk-section-title
 
 # Grammar of Graphics
-
---
-
-
-![](images/nyt-inequality.png)
-
-
-
 
 ---
 
@@ -64,17 +55,45 @@ nhanes <- read_csv(here("data/nhanes.csv")) %>%
 
 ![](images/grammar-of-graphics.png)
 
+<!-- --- -->
+
+<!-- class: middle -->
+
+<!-- <p style="font-size: 150%";> -->
+<!-- The grammar of graphics is based on the insight that you can uniquely describe <i>any</i> plot as a combination of a dataset, a geom, a set of mappings, a stat, a position adjustment, a coordinate system, and a faceting scheme. -->
+<!-- </p> -->
+
+<!-- &mdash; Garrett Grolemund and Hadley Wickham in [R for Data Science](https://r4ds.had.co.nz/data-visualisation.html#the-layered-grammar-of-graphics) -->
+
 
 ---
 
-# ggplot
+class: middle, center
 
+![](images/nyt-inequality.png)
+
+---
+
+class: middle, center
+
+![](images/nyt-inequality-annotated.png)
+
+---
+
+# ggplot2
+
+.pull-left[
 ```{r}
-ggplot(data = data_frame,
-       mapping = aes(x = var1,
-                     y = var2)) +
-  geom_point()
+ggplot(data = inequality_data,
+       mapping = aes(x = year,
+                     y = income_change,
+                     color = group)) +
+  geom_line()
 ```
+]
+.pull-right[
+![](images/nyt-inequality.png)
+]
 
 --
 
@@ -82,481 +101,8 @@ ggplot(data = data_frame,
 
 ---
 
+class: inverse, center, middle, dk-section-title
 
-# Scatterplot
+The remainder of this section of the course does not use slides. 
 
-.pull-left[
-```{r}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height)) +
-  geom_point()
-
-```
-
-
-
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height)) +
-  geom_point() 
-```
-]
-
----
-
-# Histogram
-
-.pull-left[
-```{r}
-
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_histogram()
-
-```
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_histogram()
-```
-]
-
----
-
-## Histograms
-
-.pull-left[
-```{r}
-
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_histogram(bins = 100) #<<
-
-```
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_histogram(bins = 100) #<<
-```
-]
-
-
----
-
-# Bar Chart
-
-There are two basic approaches to making bar charts.
-
-.pull-left[
-
-**Approach #1**
-
-Use your raw data
-
-Only assign a variable to the x axis
-
-Let ggplot use the default `stat` transformation (`stat = count`) to generate counts that it then plots on the y axis.
-]
-
---
-
-.pull-right[
-
-**Approach #2**
-
-Wrangle your data frame before plotting, possibly creating a new data frame in the process
-
-Assign variables to the x and y axes
-
-Use `stat = identity` to tell ggplot to use the data exactly as it is
-
-]
-
----
-
-
-### Bar Chart v1
-
-.pull-left[
-```{r}
-
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_bar() 
-
-```
-
-
-
-
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_bar() 
-```
-]
-
-
----
-
-
-### Bar Chart v1
-
-How does ggplot know what to plot on the y axis?
-
-![](images/grammar-of-graphics.png)
-
-
-
----
-
-
-### Bar Chart v1
-
-
-
-.pull-left[
-
-The default statistical transformation for `geom_bar` is `count`. This will give us the same result as our previous plot.
-
-```{r}
-
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_bar(stat = "count") #<<
-
-```
-
-
-
-
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_bar(stat = "count") #<<
-```
-]
-
----
-
-### Bar Chart v2
-
-
-
-```{r echo = F, eval = T}
-female_height_inches_by_age <- nhanes %>% 
-  filter(gender == "female") %>% 
-  mutate(height_inches = height / 2.54) %>% 
-  group_by(age_decade) %>% 
-  summarize(height_inches = mean(height_inches,
-                                 na.rm = TRUE)) %>% 
-  drop_na(age_decade)
-```
-
-
---
-
-.pull-left[
-
-It's often easier to do our analysis work, save a data frame, and then use this to plot.
-
-```{r}
-
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_bar(stat = "identity") #<<
-
-```
-
-*The `stat = identity` here tells R to use the exact data points without any `stat` transformations.*
-
-]
-
---
-
-.pull-right[
-```{r echo = F, eval = T}
-
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_bar(stat = "identity") #<<
-
-```
-]
-
----
-
-### Bar Chart v2
-
-.pull-left[
-
-`coord_flip` will flip the x and y axes
-
-```{r}
-
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_bar(stat = "identity") +
-  coord_flip() #<<
-
-```
-
-]
-
---
-
-.pull-right[
-```{r echo = F, eval = T}
-
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_bar(stat = "identity") +
-  coord_flip() #<<
-
-```
-]
-
----
-
-### Bar Chart v2
-
-
-.pull-left[
-
-`geom_col` uses `stat = "identity"` by default.
-
-```{r}
-
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_col() #<<
-
-```
-
-]
-
---
-
-.pull-right[
-```{r echo = F, eval = T}
-
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_col() #<<
-
-```
-]
-
----
-
-class: dk-section-title, center, middle, inverse
-
-# color and fill
-
----
-
-## color
-
-.pull-left[
-
-```{r}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-                     color = gender)) + #<<
-  geom_point()
-
-```
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-                     color = gender)) +
-  geom_point()
-
-```
-]
-
----
-
-## color
-
-.pull-left[
-
-The actual colors are determined by using a `scale_` function.
-
-```{r}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-                     color = gender)) + 
-  geom_point() +
-  scale_color_manual(values = c("blue", "yellow")) ##<
-
-```
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-                     color = gender)) + 
-  geom_point() +
-  scale_color_manual(values = c("blue", "yellow")) ##<
-
-```
-]
-
----
-
-## color
-
-.pull-left[
-
-```{r}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-                     color = gender)) + 
-  geom_point() +
-  scale_color_viridis_d(option = "plasma") ##<
-
-```
-]
-
---
-
-.pull-right[
-```{r eval = T, echo = F}
-
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-                     color = gender)) + 
-  geom_point() +
-  scale_color_viridis_d(option = "plasma") ##<
-
-```
-]
-
-
----
-
-## fill
-
-```{r eval = T}
-height_inches_by_age <- nhanes %>% 
-  mutate(height_inches = height / 2.54) %>% 
-  group_by(age_decade, gender) %>% #<<
-  summarize(height_inches = mean(height_inches,
-                                 na.rm = TRUE)) %>% 
-  drop_na(age_decade)
-```
-
-
-.pull-left[
-
-```{r}
-
-ggplot(data = height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches,
-                     color = age_decade)) +
-  geom_col() 
-
-```
-
-]
-
---
-
-.pull-right[
-```{r echo = F, eval = T}
-
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_col() #<<
-
-```
-]
-
-
-
-
----
-
-# position dodge
-
-
-
-```{r eval = T}
-height_inches_by_age <- nhanes %>% 
-  mutate(height_inches = height / 2.54) %>% 
-  group_by(age_decade, gender) %>% #<<
-  summarize(height_inches = mean(height_inches,
-                                 na.rm = TRUE)) %>% 
-  drop_na(age_decade)
-```
-
-```{r}
-ggplot(data = height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches,
-                     fill = gender)) +
-  geom_col(position = "dodge") 
-```
-
-
-
-
-
-
+See instead [this RMarkdown document](https://github.com/rfortherestofus/fundamentals/blob/master/data-visualization-examples.Rmd) with examples.

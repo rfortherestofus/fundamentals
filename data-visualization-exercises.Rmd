@@ -1,5 +1,5 @@
 ---
-title: "Fundamentals of Data Wrangling and Analysis Examples"
+title: "Fundamentals of Data Visualization Exercises"
 author: "R for the Rest of Us"
 output: 
     html_document:
@@ -81,11 +81,11 @@ Create a new data frame called `sleep_by_gender` that shows the average amount o
 # YOUR CODE HERE 
 ```
 
+Plot the average amount of sleep per night for males and females.
+
 ```{r}
 # YOUR CODE HERE 
 ```
-
-
 
 
 Make the same graph as above, but use `geom_col` instead of `geom_bar`.
@@ -121,7 +121,7 @@ Take your scatterplot that you just made and add a scale using `scale_color_brew
 # YOUR CODE HERE 
 ```
 
-Do nearly the same thing to change the color of the last bar chart you made (the one about sleep and gender). Note that NA values will not show up so use the `na.value` argument to set the NAs to be blue (you can use the text "blue" to do this)
+Do nearly the same thing to change the color of the last bar chart you made (the one about sleep and gender). 
 
 ```{r}
 # YOUR CODE HERE 
@@ -147,9 +147,9 @@ Copy the last code chunk. Then adjust the breaks on the y axis so that it shows 
 Copy your last code chunk. Then do the following:
 
 1. Add text labels to each bar. 
-1. Use the `round` argument to just show one decimal place in each label.
-1. Use the `vjust` argument to have them show up at the inner edge of the bars.
-1. Make the labels all white.
+2. Use the `round` argument to just show one decimal place in each label.
+3. Use the `vjust` argument to have them show up at the inner edge of the bars.
+4. Make the labels all white.
 
 ```{r}
 # YOUR CODE HERE 
@@ -160,7 +160,7 @@ Copy your last code chunk. Then do the following:
 Do the same thing as above, but use `geom_label` instead of `geom_text`. Also, do the following:
 
 1. Use the `vjust` argument to have them show up at the outer edge of the bars.
-1. Don't show the legend (hint: you'll have to add code in two places to make this happen).
+2. Don't show the legend (hint: you'll have to add code in two places to make this happen).
 
 ```{r}
 # YOUR CODE HERE 
@@ -172,9 +172,9 @@ Do the same thing as above, but use `geom_label` instead of `geom_text`. Also, d
 Use the code chunk from above with `geom_text` (not the last one with `geom_label`). Do the following:
 
 1. Add a title
-1. Add a better y axis label
-1. Remove the x axis label
-1. Remove the legend
+2. Add a better y axis label
+3. Remove the x axis label
+4. Remove the legend (hint: use the `show.legend` argument again)
 
 ```{r}
 # YOUR CODE HERE 
@@ -200,7 +200,7 @@ Then add the `theme_ipsum` to your plot.
 # YOUR CODE HERE 
 ```
 
-# Facetting (aka Small Multiples)
+# Facets
 
 I've created a data frame called `sleep_by_gender_by_age` for you. Run the code chunk below to load the data frame.
 

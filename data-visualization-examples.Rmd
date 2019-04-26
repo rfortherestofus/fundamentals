@@ -1,5 +1,5 @@
 ---
-title: "Fundamentals of Data Wrangling and Analysis Examples"
+title: "Fundamentals of Data Visualization Examples"
 author: "R for the Rest of Us"
 output: 
     html_document:
@@ -46,14 +46,11 @@ nhanes <- read_csv("data/nhanes.csv") %>%
 
 We use `geom_point` to make a scatterplot.
 
-
 ```{r}
-
 ggplot(data = nhanes,
        mapping = aes(x = age,
                      y = height)) +
   geom_point()
-
 ```
 
 Let's take a look at what's going on here.
@@ -70,29 +67,34 @@ Let's take a look at what's going on here.
 
 We use `geom_histogram` to make a histogram.
 
-
 ```{r}
-
 ggplot(data = nhanes, 
        mapping = aes(x = height)) +
   geom_histogram()
-
 ```
 
 
+How does ggplot know what to plot on the y axis? It's using the default statistical transformation for `geom_histogram`, which is `stat = "bin"`.
 
 
+![](slides/images/grammar-of-graphics-stat-example-bin.png)
+
+If we add `stat = "bin"` we get the same thing. Each geom has a default stat.
+
+```{r}
+ggplot(data = nhanes, 
+       mapping = aes(x = height)) +
+  geom_histogram(stat = "bin")
+```
 
 We can adjust the number of bins using the `bins` argument. 
 
-
 ```{r}
-
 ggplot(data = nhanes, 
        mapping = aes(x = height)) +
-  geom_histogram(bins = 100) 
-
+  geom_histogram(bins = 100)
 ```
+
 
 # Bar Chart
 
@@ -100,11 +102,11 @@ There are two basic approaches to making bar charts, both of which use `geom_bar
 
 **Approach #1**
 
-Use your raw data
+Use your full dataset.
 
-Only assign a variable to the x axis
+Only assign a variable to the x axis.
 
-Let ggplot use the default `stat` transformation (`stat = count`) to generate counts that it then plots on the y axis.
+Let ggplot use the default `stat` transformation (`stat = "count"`) to generate counts that it then plots on the y axis.
 
 **Approach #2**
 
@@ -112,35 +114,26 @@ Wrangle your data frame before plotting, possibly creating a new data frame in t
 
 Assign variables to the x and y axes
 
-Use `stat = identity` to tell ggplot to use the data exactly as it is
-
-
-
-
+Use `stat = "identity"` to tell ggplot to use the data exactly as it is
 
 
 ## Bar Chart v1
 
 
 ```{r}
-
 ggplot(data = nhanes, 
        mapping = aes(x = height)) +
-  geom_bar() 
-
+  geom_bar()
 ```
 
 
-How does ggplot know what to plot on the y axis? It's using the default statistical transformation for `geom_bar`.
 
 The default statistical transformation for `geom_bar` is `count`. This will give us the same result as our previous plot.
 
 ```{r}
-
 ggplot(data = nhanes, 
        mapping = aes(x = height)) +
   geom_bar(stat = "count") 
-
 ```
 
 Here's what's going on.
@@ -172,12 +165,10 @@ female_height_inches_by_age
 Then let's use this data frame to make a bar chart. The `stat = "identity"` here tells ggplot to use the exact data points without any `stat` transformations.
 
 ```{r}
-
 ggplot(data = female_height_inches_by_age, 
        mapping = aes(x = age_decade, 
                      y = height_inches)) +
   geom_bar(stat = "identity") 
-
 ```
 
 
@@ -190,7 +181,7 @@ ggplot(data = female_height_inches_by_age,
        mapping = aes(x = age_decade, 
                      y = height_inches)) +
   geom_bar(stat = "identity") +
-  coord_flip() 
+  coord_flip()
 
 ```
 
@@ -202,7 +193,8 @@ We can also `geom_col`, which uses `stat = "identity"` by default.
 ggplot(data = female_height_inches_by_age, 
        mapping = aes(x = age_decade, 
                      y = height_inches)) +
-  geom_col() 
+  geom_col() +
+  coord_flip()
 
 ```
 
@@ -211,7 +203,6 @@ ggplot(data = female_height_inches_by_age,
 # `color` and `fill`
 
 ## color
-
 
 We add the color argument *within* the `aes` so that the data in that variable is mapped to those aesthetic properties.
 
@@ -257,33 +248,30 @@ ggplot(data = female_height_inches_by_age,
 
 # Scales
 
-## color
+![](slides/images/grammar-of-graphics.png)
 
+## color
 
 We can change which colors the data is mapped to by using a `scale_` function. 
 
 ```{r}
-
 ggplot(data = nhanes,
        mapping = aes(x = age,
                      y = height,
                      color = gender)) + 
   geom_point() +
   scale_color_manual(values = c("purple", "orange")) 
-
 ```
 
 We can also use built-in palettes like `scale_color_viridis_d` (the d means it's for discrete data). 
 
 ```{r}
-
 ggplot(data = nhanes,
        mapping = aes(x = age,
                      y = height,
                      color = gender)) + 
   geom_point() +
   scale_color_viridis_d(option = "plasma")
-
 ```
 
 ## x and y axes
@@ -386,7 +374,8 @@ ggplot(data = female_height_inches_by_age,
                      y = height_inches)) +
   geom_bar(stat = "identity") +
   geom_text(aes(label = height_inches_one_digit),
-            vjust = 1)
+            hjust = 0) +
+  coord_flip()
 ```
 
 I often do something like `vjust = 1.5` to give a bit more padding. 
@@ -532,7 +521,6 @@ ggplot(data = height_inches_by_age,
 
 # Themes
 
-
 To add a theme to a plot, we use the `theme_` set of functions. There are several built-in themes. For instance, `theme_minimal`.
 
 ```{r}
@@ -571,9 +559,10 @@ ggplot(data = height_inches_by_age,
 
 There are also packages that give you themes you can apply to your plots. 
 
-Let's load the `ggthemes` package.
+Let's load the `ggthemes` package (install it if necessary).
 
 ```{r}
+# install.packages("ggthemes")
 library(ggthemes)
 ```
 
@@ -615,7 +604,7 @@ ggplot(data = height_inches_by_age,
 ```
 
 
-# Facetting (aka Small Multiples)
+# Facets
 
 One of the most powerful features of ggplot is facetting. You can make small multiples by adding just a line of code using the `facet_wrap` function. 
 
@@ -664,7 +653,7 @@ ggplot(data = nhanes,
        mapping = aes(x = age,
                      y = height,
                      color = gender)) +
-  geom_point(show.legend = FALSE) +
+  geom_point() +
   theme_economist() +
   facet_wrap(~gender)
 ```
@@ -677,7 +666,7 @@ Or our histogram.
 ggplot(data = nhanes, 
        mapping = aes(x = height,
                      fill = gender)) +
-  geom_histogram(show.legend = FALSE) +
+  geom_histogram() +
   theme_economist() +
   facet_wrap(~gender)
 ```
@@ -719,8 +708,6 @@ ggplot(data = height_inches_by_age,
        fill = "") +
   theme_economist() +
   facet_wrap(~gender)
-
-
 ```
 
 And then we save this plot.

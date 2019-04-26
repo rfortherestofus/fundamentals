@@ -1,5 +1,5 @@
 ---
-title: "Fundamentals of Data Wrangling and Analysis Examples"
+title: "Fundamentals of Data Visualization Solutions"
 author: "R for the Rest of Us"
 output: 
     html_document:
@@ -41,7 +41,6 @@ nhanes <- read_csv("data/nhanes.csv") %>%
 Make a scatterplot that shows weight on the x axis and height on the y axis.
 
 ```{r}
-
 ggplot(data = nhanes,
        mapping = aes(x = weight,
                      y = height)) +
@@ -54,24 +53,19 @@ ggplot(data = nhanes,
 
 Make a histogram that shows the distribution of the weight variable.
 
-
 ```{r}
-
 ggplot(data = nhanes, 
        mapping = aes(x = weight)) +
   geom_histogram()
-
 ```
 
 
 Copy your code from above, but adjust it so that there are 50 bins.
 
 ```{r}
-
 ggplot(data = nhanes, 
        mapping = aes(x = weight)) +
   geom_histogram(bins = 50) 
-
 ```
 
 # Bar Chart
@@ -82,11 +76,9 @@ Use the v1 approach to make a bar chart that shows a count of the number of peop
 
 
 ```{r}
-
 ggplot(data = nhanes, 
        mapping = aes(x = smoke_now)) +
   geom_bar() 
-
 ```
 
 
@@ -99,10 +91,10 @@ Create a new data frame called `sleep_by_gender` that shows the average amount o
 ```{r}
 sleep_by_gender <- nhanes %>% 
   group_by(gender) %>% 
-  summarize(avg_sleep = mean(sleep_hrs_night, na.rm = TRUE)) %>% 
-  drop_na()
+  summarize(avg_sleep = mean(sleep_hrs_night, na.rm = TRUE)) 
 ```
 
+Plot the average amount of sleep per night for males and females.
 
 ```{r}
 ggplot(data = sleep_by_gender, 
@@ -110,8 +102,6 @@ ggplot(data = sleep_by_gender,
                      y = avg_sleep)) +
   geom_bar(stat = "identity") 
 ```
-
-
 
 
 Make the same graph as above, but use `geom_col` instead of `geom_bar`.
@@ -120,7 +110,7 @@ Make the same graph as above, but use `geom_col` instead of `geom_bar`.
 ggplot(data = sleep_by_gender, 
        mapping = aes(x = gender, 
                      y = avg_sleep)) +
-  geom_bar(stat = "identity") 
+  geom_col()
 ```
 
 
@@ -163,7 +153,7 @@ ggplot(data = nhanes,
   scale_color_brewer(palette = "Dark2")
 ```
 
-Do nearly the same thing to change the color of the last bar chart you made (the one about sleep and gender). Note that NA values will not show up so use the `na.value` argument to set the NAs to be blue (you can use the text "blue" to do this)
+Do nearly the same thing to change the color of the last bar chart you made (the one about sleep and gender). 
 
 ```{r}
 ggplot(data = sleep_by_gender, 
@@ -171,8 +161,7 @@ ggplot(data = sleep_by_gender,
                      y = avg_sleep,
                      fill = gender)) +
   geom_col() +
-  scale_fill_brewer(palette = "Dark2",
-                    na.value = "blue") 
+  scale_fill_brewer(palette = "Dark2") 
 ```
 
 ## x and y axes
@@ -185,8 +174,7 @@ ggplot(data = sleep_by_gender,
                      y = avg_sleep,
                      fill = gender)) +
   geom_col() +
-  scale_fill_brewer(palette = "Dark2",
-                    na.value = "blue") +
+  scale_fill_brewer(palette = "Dark2") +
   scale_y_continuous(limits = c(0, 8))
 ```
 
@@ -198,8 +186,7 @@ ggplot(data = sleep_by_gender,
                      y = avg_sleep,
                      fill = gender)) +
   geom_col() +
-  scale_fill_brewer(palette = "Dark2",
-                    na.value = "blue") +
+  scale_fill_brewer(palette = "Dark2") +
   scale_y_continuous(limits = c(0, 8),
                      breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8))
 ```
@@ -210,9 +197,9 @@ ggplot(data = sleep_by_gender,
 Copy your last code chunk. Then do the following:
 
 1. Add text labels to each bar. 
-1. Use the `round` argument to just show one decimal place in each label.
-1. Use the `vjust` argument to have them show up at the inner edge of the bars.
-1. Make the labels all white.
+2. Use the `round` argument to just show one decimal place in each label.
+3. Use the `vjust` argument to have them show up at the inner edge of the bars.
+4. Make the labels all white.
 
 ```{r}
 ggplot(data = sleep_by_gender, 
@@ -234,7 +221,7 @@ ggplot(data = sleep_by_gender,
 Do the same thing as above, but use `geom_label` instead of `geom_text`. Also, do the following:
 
 1. Use the `vjust` argument to have them show up at the outer edge of the bars.
-1. Don't show the legend (hint: you'll have to add code in two places to make this happen).
+2. Don't show the legend (hint: you'll have to add code in two places to make this happen).
 
 ```{r}
 ggplot(data = sleep_by_gender, 
@@ -258,9 +245,9 @@ ggplot(data = sleep_by_gender,
 Use the code chunk from above with `geom_text` (not the last one with `geom_label`). Do the following:
 
 1. Add a title
-1. Add a better y axis label
-1. Remove the x axis label
-1. Remove the legend
+2. Add a better y axis label
+3. Remove the x axis label
+4. Remove the legend (hint: use the `show.legend` argument again)
 
 ```{r}
 ggplot(data = sleep_by_gender, 
@@ -315,7 +302,7 @@ ggplot(data = sleep_by_gender,
   theme_ipsum()
 ```
 
-# Facetting (aka Small Multiples)
+# Facets
 
 I've created a data frame called `sleep_by_gender_by_age` for you. Run the code chunk below to load the data frame.
 
@@ -338,22 +325,21 @@ Now, see if you can recreate this plot. Much of the code will be the same from y
 
 ```{r}
 ggplot(data = sleep_by_gender_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = avg_sleep,
-                     fill = gender)) +
+       aes(x = age_decade,
+           y = avg_sleep,
+           fill = gender)) +
   geom_col(show.legend = FALSE) +
   geom_text(aes(label = round(avg_sleep, 1)),
             vjust = 1.5,
             color = "white") +
-  scale_fill_brewer(palette = "Dark2",
-                    na.value = "blue") +
   scale_y_continuous(limits = c(0, 8),
-                     breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8)) +
+                     breaks = seq(0, 8, by = 1)) +
+  scale_fill_brewer(palette = "Dark2") +
+  facet_wrap(~gender) +
+  theme_ipsum() +
   labs(title = "Sleep by gender and age",
        y = "Hours of sleep per night",
-       x = "") +
-  theme_ipsum() +
-  facet_wrap(~gender)
+       x = "")
 
 ```
 
@@ -366,7 +352,8 @@ Save your last plot to a PNG that is 8 inches wide and 5 inches high. Put it in 
 ```{r}
 ggsave(filename = "plots/my-sleep-plot.png",
        height = 5,
-       width = 8)
+       width = 8,
+       unit = "in")
 ```
 
 

@@ -24,24 +24,15 @@ class: center, middle, inverse, title-slide
 
 
 
-# First, a tip
+# An Important Workflow Tip
 
 ![](images/dont-load-data.png)
 
 ---
 
-
-
+class: inverse, center, middle, dk-section-title
 
 # Grammar of Graphics
-
---
-
-
-![](images/nyt-inequality.png)
-
-
-
 
 ---
 
@@ -49,18 +40,46 @@ class: center, middle, inverse, title-slide
 
 ![](images/grammar-of-graphics.png)
 
+&lt;!-- --- --&gt;
+
+&lt;!-- class: middle --&gt;
+
+&lt;!-- &lt;p style="font-size: 150%";&gt; --&gt;
+&lt;!-- The grammar of graphics is based on the insight that you can uniquely describe &lt;i&gt;any&lt;/i&gt; plot as a combination of a dataset, a geom, a set of mappings, a stat, a position adjustment, a coordinate system, and a faceting scheme. --&gt;
+&lt;!-- &lt;/p&gt; --&gt;
+
+&lt;!-- &amp;mdash; Garrett Grolemund and Hadley Wickham in [R for Data Science](https://r4ds.had.co.nz/data-visualisation.html#the-layered-grammar-of-graphics) --&gt;
+
 
 ---
 
-# ggplot
+class: middle, center
 
+![](images/nyt-inequality.png)
+
+---
+
+class: middle, center
+
+![](images/nyt-inequality-annotated.png)
+
+---
+
+# ggplot2
+
+.pull-left[
 
 ```r
-ggplot(data = data_frame,
-       mapping = aes(x = var1,
-                     y = var2)) +
-  geom_point()
+ggplot(data = inequality_data,
+       mapping = aes(x = year,
+                     y = income_change,
+                     color = group)) +
+  geom_line()
 ```
+]
+.pull-right[
+![](images/nyt-inequality.png)
+]
 
 --
 
@@ -68,348 +87,11 @@ ggplot(data = data_frame,
 
 ---
 
+class: inverse, center, middle, dk-section-title
 
-# Scatterplot
+The remainder of this section of the course does not use slides. 
 
-.pull-left[
-
-```r
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height)) +
-  geom_point()
-```
-
-
-
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
-]
-
----
-
-# Histogram
-
-.pull-left[
-
-```r
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_histogram()
-```
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
-]
-
----
-
-## Histograms
-
-.pull-left[
-
-```r
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-* geom_histogram(bins = 100)
-```
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
-]
-
-
----
-
-# Bar Chart
-
-There are two basic approaches to making bar charts.
-
-.pull-left[
-
-**Approach #1**
-
-Use your raw data
-
-Only assign a variable to the x axis
-
-Let ggplot use the default `stat` transformation (`stat = count`) to generate counts that it then plots on the y axis.
-]
-
---
-
-.pull-right[
-
-**Approach #2**
-
-Wrangle your data frame before plotting, possibly creating a new data frame in the process
-
-Assign variables to the x and y axes
-
-Use `stat = identity` to tell ggplot to use the data exactly as it is
-
-]
-
----
-
-
-### Bar Chart v1
-
-.pull-left[
-
-```r
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-  geom_bar() 
-```
-
-
-
-
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
-]
-
-
----
-
-
-### Bar Chart v1
-
-How does ggplot know what to plot on the y axis?
-
-![](images/grammar-of-graphics.png)
-
-
-
----
-
-
-### Bar Chart v1
-
-
-
-.pull-left[
-
-The default statistical transformation for `geom_bar` is `count`. This will give us the same result as our previous plot.
-
-
-```r
-ggplot(data = nhanes, 
-       mapping = aes(x = height)) +
-* geom_bar(stat = "count")
-```
-
-
-
-
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
-]
-
----
-
-### Bar Chart v2
-
-
-
-
-
-
---
-
-.pull-left[
-
-It's often easier to do our analysis work, save a data frame, and then use this to plot.
-
-
-```r
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-* geom_bar(stat = "identity")
-```
-
-*The `stat = identity` here tells R to use the exact data points without any `stat` transformations.*
-
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
-]
-
----
-
-### Bar Chart v2
-
-.pull-left[
-
-`coord_flip` will flip the x and y axes
-
-
-```r
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_bar(stat = "identity") +
-* coord_flip()
-```
-
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
-]
-
----
-
-### Bar Chart v2
-
-
-.pull-left[
-
-`geom_col` uses `stat = "identity"` by default.
-
-
-```r
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-* geom_col()
-```
-
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
-]
-
----
-
-class: dk-section-title, center, middle, inverse
-
-# color and fill
-
----
-
-## color
-
-.pull-left[
-
-
-```r
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-*                    color = gender)) +
-  geom_point()
-```
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
-]
-
----
-
-## color
-
-.pull-left[
-
-
-```r
-ggplot(data = nhanes,
-       mapping = aes(x = age,
-                     y = height,
-                     color = gender)) + 
-  geom_point() +
-  scale_color_brewer()
-```
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
-]
-
-
----
-
-
-
-
-.pull-left[
-
-
-```r
-ggplot(data = female_height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches)) +
-  geom_col() 
-```
-
-]
-
---
-
-.pull-right[
-![](data-visualization-slides_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
-]
-
-
-
-
----
-
-# position dodge
-
-
-
-
-```r
-height_inches_by_age &lt;- nhanes %&gt;% 
-  mutate(height_inches = height / 2.54) %&gt;% 
-* group_by(age_decade, gender) %&gt;%
-  summarize(height_inches = mean(height_inches,
-                                 na.rm = TRUE)) %&gt;% 
-  drop_na(age_decade)
-```
-
-
-```r
-ggplot(data = height_inches_by_age, 
-       mapping = aes(x = age_decade, 
-                     y = height_inches,
-                     fill = gender)) +
-  geom_col(position = "dodge") 
-```
+See instead [this RMarkdown document](https://github.com/rfortherestofus/fundamentals/blob/master/data-visualization-examples.Rmd) with examples.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
