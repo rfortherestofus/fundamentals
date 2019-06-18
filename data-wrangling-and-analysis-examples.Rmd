@@ -33,37 +33,29 @@ library(skimr)
 bad_names <- read_csv("data/badnames.csv")
 
 bad_names
-
 ```
 
 With the `bad_names` data frame, we have to use back tick (`) before and after variable names with spaces in them. Also, RStudio doesn't autocomplete the variable names, which is a pain!
 
 ```{r}
-
 bad_names %>% 
   skim(`Age Decade`)
-
 ```
 
 We can use `clean_names` as follows:
 
 ```{r}
-
 good_names <- bad_names %>% 
   clean_names()
 
-
 good_names
-
 ```
 
 Variable names are much easier to type now! And RStudio autocompletes them, which is super handy.
 
 ```{r}
-
 good_names %>% 
   skim(age_decade)
-
 ```
 
 
@@ -108,10 +100,8 @@ Used within `select`, the `contains` function selects variable with certain text
 
 
 ```{r}
-
 nhanes %>%
   select(contains("age"))
-
 ```
 
 ```{r}
