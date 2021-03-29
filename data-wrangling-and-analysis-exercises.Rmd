@@ -184,7 +184,7 @@ Create a chain that keeps only those are college grads (line #1). Then, `filter`
 
 
 
-We can use Use `<`, `>`, `<=`, and `=>` for numeric data. 
+We can use Use `<`, `>`, `<=`, and `>=` for numeric data. 
 
 Use `filter` to only show those reported at least 5 days of physical activity in the last 30 days (this is the `phys_active_days` variable). Then, use `select` to keep only the `phys_active_days` and the `days_phys_hlth_bad` variables.
 

@@ -22,8 +22,7 @@ The exercises are part of the Fundamentals of R course. For more, see the [R for
 Let's load the packages we need. These include `tidyverse` (especially the `dplyr` package) and `janitor`. 
 
 ```{r}
-library(tidyverse)
-library(janitor)
+# YOUR CODE HERE
 ```
 
 # Import NHANES Data
